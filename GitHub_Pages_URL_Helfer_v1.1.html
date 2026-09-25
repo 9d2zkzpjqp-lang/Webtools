@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <title>GitHub Pages URL-Helfer</title>
+  <style>
+    :root{
+      --bg:#f3f6f8;
+      --card:#ffffff;
+      --text:#1f2328;
+      --muted:#667085;
+      --line:#d7dee7;
+      --soft:#f8fafc;
+      --accent:#2f6b53;
+      --accent-text:#fff;
+      --good-bg:#eaf5ef;
+      --good-text:#315e4b;
+      --warn-bg:#fff7e6;
+      --warn-text:#7a5b11;
+      --shadow:0 1px 2px rgba(16,24,40,.05),0 8px 28px rgba(16,24,40,.06);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+    body{min-height:100vh;padding:34px 18px 48px}
+    .wrap{max-width:980px;margin:0 auto}
+    .card{
+      background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+      box-shadow:var(--shadow); padding:28px;
+    }
+    h1{font-size:clamp(34px,5vw,52px);line-height:1.04;margin:0 0 16px;letter-spacing:-.035em}
+    .lead{font-size:20px;line-height:1.45;color:var(--muted);margin:0 0 28px}
+    label{display:block;font-weight:700;font-size:17px;margin:0 0 9px;color:#5d6676}
+    .row{display:flex;gap:10px;align-items:stretch}
+    .row > input{flex:1}
+    input[type="text"], input[type="url"]{
+      width:100%;font:inherit;font-size:18px;border:1px solid var(--line);border-radius:14px;
+      background:#fff;color:#1f2328;padding:15px 16px;outline:none;min-height:58px;
+    }
+    input:focus{border-color:#9aafc1;box-shadow:0 0 0 3px rgba(47,107,83,.09)}
+    button{
+      border:1px solid var(--line);border-radius:13px;background:#fff;color:#1f2328;
+      font:inherit;font-weight:700;font-size:17px;padding:0 16px;min-height:48px;cursor:pointer;
+    }
+    button.primary{background:var(--accent);color:var(--accent-text);border-color:var(--accent)}
+    button:disabled{opacity:.45;cursor:default}
+    .check{
+      display:flex;align-items:center;gap:14px;border:1px solid var(--line);
+      border-radius:14px;padding:14px 16px;margin-top:20px;min-height:62px;
+      font-weight:700;font-size:18px;
+    }
+    .check input{width:28px;height:28px;margin:0;accent-color:var(--accent)}
+    .field{margin-top:22px}
+    .result{
+      margin-top:28px;border:1px solid var(--line);border-radius:14px;padding:16px;background:var(--soft)
+    }
+    .result-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+    .result-title{font-weight:800}
+    .badge{
+      border:1px solid var(--line);border-radius:999px;padding:6px 10px;font-size:14px;
+      color:var(--muted);background:#fff;white-space:nowrap
+    }
+    .url{
+      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;
+      font-size:17px;line-height:1.45;word-break:break-all;min-height:26px
+    }
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    .note{
+      margin-top:18px;padding:14px 16px;border-radius:14px;background:var(--good-bg);
+      color:var(--good-text);font-size:16px;line-height:1.45
+    }
+    .warning{background:var(--warn-bg);color:var(--warn-text)}
+    .mini{color:var(--muted);font-size:14px;margin-top:8px;line-height:1.45}
+    .secondary-result{margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)}
+    footer{text-align:center;color:#8a93a2;font-size:13px;margin-top:18px}
+    @media(max-width:700px){
+      body{padding:12px 10px 28px}
+      .card{padding:20px 16px}
+      .lead{font-size:18px}
+      .row{flex-direction:column}
+      .row button{width:100%}
+      button{min-height:46px}
+      .result-head{align-items:flex-start;flex-direction:column}
+    }
+    @media (prefers-color-scheme:dark){
+      :root{
+        --bg:#111418;--card:#191d22;--text:#f2f4f7;--muted:#aab2bf;--line:#343a43;--soft:#15191e;
+        --good-bg:#183328;--good-text:#bfe3d0;--warn-bg:#3b2f14;--warn-text:#f0d898
+      }
+      input[type="text"],input[type="url"],button,.badge{background:#111418;color:#f2f4f7}
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <main class="card">
+    <h1>GitHub Pages URL-Helfer</h1>
+    <p class="lead">
+      GitHub-Adresse eines Repositories, Ordners oder einer HTML-Datei einfügen –
+      die öffentliche GitHub-Pages-Adresse wird automatisch erzeugt.
+    </p>
+
+    <label for="githubUrl">GitHub-URL</label>
+    <div class="row">
+      <input id="githubUrl" type="url" inputmode="url"
+             placeholder="https://github.com/USERNAME/REPOSITORY/…"
+             autocomplete="off" autocapitalize="none" spellcheck="false">
+      <button id="pasteBtn" type="button">Einfügen</button>
+    </div>
+
+    <div class="check">
+      <input id="dashboard" type="checkbox">
+      <label for="dashboard" style="margin:0;color:inherit">Dashboard-URL anzeigen</label>
+    </div>
+
+    <div class="field">
+      <label for="version">optional v=</label>
+      <input id="version" type="text" inputmode="numeric" placeholder="z. B. 6" autocomplete="off">
+    </div>
+
+    <section class="result" aria-live="polite">
+      <div class="result-head">
+        <div class="result-title">Pages-URL</div>
+        <div class="badge" id="kind">Noch keine URL</div>
+      </div>
+      <div class="url" id="resultUrl">–</div>
+      <div class="actions">
+        <button class="primary" id="copyBtn" type="button" disabled>Kopieren</button>
+        <button id="openBtn" type="button" disabled>Öffnen</button>
+      </div>
+
+      <div class="secondary-result" id="dashBlock" hidden>
+        <div class="result-title" style="margin-bottom:8px">Dashboard-URL</div>
+        <div class="url" id="dashUrl">–</div>
+        <div class="actions">
+          <button class="primary" id="copyDashBtn" type="button">Dashboard kopieren</button>
+          <button id="openDashBtn" type="button">Dashboard öffnen</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="note" id="hint">
+      Unterstützt Repository-URLs sowie GitHub-Links mit <code>/tree/…</code> und <code>/blob/…</code>.
+      Bei <code>index.html</code> wird automatisch die kürzere Ordneradresse verwendet.
+    </div>
+    <div class="mini">
+      Annahme: GitHub Pages veröffentlicht aus dem Repository-Inhalt. Für ein Repository
+      <code>USERNAME.github.io</code> wird automatisch die persönliche Pages-Root verwendet.
+    </div>
+  </main>
+  <footer>GitHub Pages URL-Helfer · v1.1</footer>
+</div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const input = $("githubUrl");
+  const version = $("version");
+  const dashboard = $("dashboard");
+  const resultUrl = $("resultUrl");
+  const dashUrl = $("dashUrl");
+  const kind = $("kind");
+  const hint = $("hint");
+  const dashBlock = $("dashBlock");
+  const copyBtn = $("copyBtn");
+  const openBtn = $("openBtn");
+
+  let currentUrl = "";
+  let currentDashUrl = "";
+
+  function cleanVersion(v){
+    return (v || "").trim().replace(/^v\s*=\s*/i,"");
+  }
+
+  function addParams(url, params){
+    const u = new URL(url);
+    for (const [k,v] of Object.entries(params)){
+      if (v !== "" && v != null) u.searchParams.set(k,v);
+    }
+    return u.toString();
+  }
+
+  function parseGitHub(raw){
+    raw = (raw || "").trim();
+    if (!raw) return {ok:false, empty:true};
+
+    let u;
+    try { u = new URL(raw); }
+    catch { return {ok:false, message:"Das ist keine gültige URL."}; }
+
+    if (!/^(www\.)?github\.com$/i.test(u.hostname)){
+      // Bereits eine GitHub-Pages-Adresse? Dann einfach übernehmen.
+      if (/\.github\.io$/i.test(u.hostname)){
+        return {ok:true, url:u.origin + u.pathname, kind:"Pages-URL"};
+      }
+      return {ok:false, message:"Bitte eine github.com-Adresse einfügen."};
+    }
+
+    const seg = u.pathname.split("/").filter(Boolean);
+    if (seg.length < 2){
+      return {ok:false, message:"In der URL fehlen Benutzername oder Repository."};
+    }
+
+    const user = seg[0];
+    const repo = seg[1].replace(/\.git$/i,"");
+    const personalRepo = repo.toLowerCase() === (user + ".github.io").toLowerCase();
+    const base = personalRepo
+      ? `https://${user}.github.io/`
+      : `https://${user}.github.io/${repo}/`;
+
+    if (seg.length === 2){
+      return {ok:true, url:base, kind:"Repository"};
+    }
+
+    const mode = seg[2];
+    let rest = [];
+    let type = "Pfad";
+
+    if (mode === "blob" || mode === "tree"){
+      if (seg.length < 4){
+        return {ok:true, url:base, kind: mode === "blob" ? "Datei" : "Ordner"};
+      }
+
+      // Übliche GitHub-Links: /blob/main/... bzw. /tree/main/...
+      // Der erste Teil nach blob/tree ist der Branch.
+      rest = seg.slice(4);
+      type = mode === "blob" ? "Datei" : "Ordner";
+    } else {
+      // Falls jemand eine ungewöhnliche URL ohne blob/tree einfügt:
+      rest = seg.slice(2);
+    }
+
+    let path = rest.join("/");
+    path = decodeURIComponent(path);
+
+    if (mode === "blob"){
+      if (/\/?index\.html?$/i.test(path)){
+        path = path.replace(/\/?index\.html?$/i,"");
+        const final = base + (path ? path.replace(/^\/+|\/+$/g,"") + "/" : "");
+        return {ok:true, url:final, kind:"index.html"};
+      }
+      const final = base + path.replace(/^\/+/,"");
+      return {ok:true, url:final, kind:type};
+    }
+
+    if (mode === "tree"){
+      const final = base + (path ? path.replace(/^\/+|\/+$/g,"") + "/" : "");
+      return {ok:true, url:final, kind:type};
+    }
+
+    const final = base + (path ? path.replace(/^\/+/,"") : "");
+    return {ok:true, url:final, kind:type};
+  }
+
+  function update(){
+    const parsed = parseGitHub(input.value);
+
+    if (!parsed.ok){
+      currentUrl = "";
+      currentDashUrl = "";
+      resultUrl.textContent = "–";
+      dashUrl.textContent = "–";
+      kind.textContent = parsed.empty ? "Noch keine URL" : "Nicht erkannt";
+      copyBtn.disabled = true;
+      openBtn.disabled = true;
+      dashBlock.hidden = !dashboard.checked;
+      hint.className = parsed.empty ? "note" : "note warning";
+      hint.innerHTML = parsed.empty
+        ? 'Unterstützt Repository-URLs sowie GitHub-Links mit <code>/tree/…</code> und <code>/blob/…</code>. Bei <code>index.html</code> wird automatisch die kürzere Ordneradresse verwendet.'
+        : parsed.message;
+      return;
+    }
+
+    let url = parsed.url;
+    const v = cleanVersion(version.value);
+    if (v) url = addParams(url, {v});
+
+    currentUrl = url;
+    resultUrl.textContent = currentUrl;
+    kind.textContent = "Erkannt: " + parsed.kind;
+    copyBtn.disabled = false;
+    openBtn.disabled = false;
+
+    currentDashUrl = addParams(parsed.url, {view:"dashboard", ...(v ? {v} : {})});
+    dashUrl.textContent = currentDashUrl;
+    dashBlock.hidden = !dashboard.checked;
+
+    hint.className = "note";
+    hint.textContent = "Adresse erkannt. Du kannst sie direkt kopieren oder öffnen.";
+  }
+
+  async function copyText(text, button){
+    if (!text) return;
+    const old = button.textContent;
+    try{
+      await navigator.clipboard.writeText(text);
+      button.textContent = "Kopiert ✓";
+    }catch{
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      ta.remove();
+      button.textContent = "Kopiert ✓";
+    }
+    setTimeout(()=>button.textContent=old,1200);
+  }
+
+  $("pasteBtn").addEventListener("click", async () => {
+    try{
+      const text = await navigator.clipboard.readText();
+      if (text){ input.value = text.trim(); update(); }
+    }catch{
+      input.focus();
+      hint.className = "note warning";
+      hint.textContent = "Safari erlaubt das direkte Lesen der Zwischenablage hier nicht. Bitte in das Feld tippen und „Einsetzen“ wählen.";
+    }
+  });
+
+  copyBtn.addEventListener("click", ()=>copyText(currentUrl, copyBtn));
+  $("copyDashBtn").addEventListener("click", ()=>copyText(currentDashUrl, $("copyDashBtn")));
+  openBtn.addEventListener("click", ()=> currentUrl && window.open(currentUrl,"_blank","noopener"));
+  $("openDashBtn").addEventListener("click", ()=> currentDashUrl && window.open(currentDashUrl,"_blank","noopener"));
+
+  input.addEventListener("input", update);
+  version.addEventListener("input", update);
+  dashboard.addEventListener("change", update);
+
+  // URL aus ?url=… übernehmen – praktisch für einen späteren Kurzbefehl.
+  const qp = new URLSearchParams(location.search);
+  const prefill = qp.get("url");
+  if (prefill){
+    input.value = prefill;
+    if (qp.get("dashboard") === "1") dashboard.checked = true;
+    if (qp.get("v")) version.value = qp.get("v");
+  }
+  update();
+})();
+</script>
+</body>
+</html>
