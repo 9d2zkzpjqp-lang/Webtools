@@ -1,0 +1,713 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Oberstufenklausuren – Auswertung v0.3.5</title>
+<style>
+:root{
+  --bg:#f4f6f8;--panel:#fff;--ink:#18212b;--muted:#66727f;--line:#d7dde4;
+  --accent:#245c7a;--accent2:#eaf2f6;--danger:#9b2c2c;--warn:#855f00;--ok:#1f6a4a;
+  --radius:10px;--shadow:0 1px 3px rgba(0,0,0,.07);--correction-font-size:8.4pt;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:15px}
+button,input,select,textarea{font:inherit}button{border:1px solid #bfc8d2;background:#fff;border-radius:7px;padding:.58rem .82rem;cursor:pointer;color:var(--ink)}button:hover{background:#f4f7f9}button.primary{background:var(--accent);border-color:var(--accent);color:#fff}.danger{color:var(--danger);border-color:#dfb7b7}.small{font-size:.88rem;padding:.34rem .55rem}.hidden{display:none!important}
+input,select,textarea{border:1px solid #bfc8d2;border-radius:7px;background:#fff;padding:.52rem .62rem;color:var(--ink)}input[type=number]{text-align:right}textarea{width:100%;resize:vertical}
+header.app{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30}.header-inner{max-width:1500px;margin:auto;padding:.85rem 1.1rem;display:flex;gap:1rem;align-items:center;justify-content:space-between}h1{font-size:1.1rem;margin:0}.subtitle{font-size:.82rem;color:var(--muted);margin-top:.15rem}.statusbar{display:flex;gap:.45rem;align-items:center;flex-wrap:wrap;justify-content:flex-end}.badge{font-size:.78rem;border:1px solid var(--line);border-radius:999px;padding:.25rem .5rem;background:#fff;color:var(--muted)}.badge.status-ok{background:#edf8f2;border-color:#bcdcca;color:#215c42}.badge.status-warn{background:#fff8e8;border-color:#ead49d;color:#6e5000}.badge.status-neutral{background:#f7f8fa;color:#66727f}.export-reminder{border-top:1px solid #ead49d;background:#fff8e8}.reminder-inner{max-width:1500px;margin:auto;padding:.5rem 1.1rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem;font-size:.82rem;color:#6e5000}.storage-status-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.65rem;margin-bottom:.8rem}.storage-status-item{border:1px solid var(--line);border-radius:8px;padding:.7rem;background:#fafbfc}.storage-status-item .k{font-size:.75rem;color:var(--muted)}.storage-status-item .v{font-size:.95rem;font-weight:700;margin-top:.18rem}
+nav.tabs{max-width:1500px;margin:auto;padding:0 1.1rem;display:flex;gap:.15rem;overflow:auto;background:#fff;border-bottom:1px solid var(--line)}nav.tabs button{border:0;border-radius:0;background:transparent;padding:.75rem .85rem;border-bottom:3px solid transparent;color:var(--muted);white-space:nowrap}nav.tabs button.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:650}
+main{max-width:1500px;margin:0 auto;padding:1.1rem}.view{display:none}.view.active{display:block}.grid{display:grid;gap:1rem}.grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}.grid.four{grid-template-columns:repeat(4,minmax(0,1fr))}.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:1rem}.card h2{font-size:1rem;margin:0 0 .8rem}.card h3{font-size:.93rem;margin:1rem 0 .55rem}.muted{color:var(--muted)}.tiny{font-size:.79rem}.note{padding:.65rem .75rem;border-radius:7px;background:#f7f8fa;border:1px solid var(--line);font-size:.88rem;color:#46515d}.note.warn{background:#fff8e8;border-color:#ead49d;color:#6e5000}.note.ok{background:#edf8f2;border-color:#bcdcca;color:#215c42}.row{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}.row.end{justify-content:flex-end}.field{display:flex;flex-direction:column;gap:.28rem}.field label{font-size:.8rem;color:var(--muted);font-weight:600}.field.grow{flex:1}.divider{height:1px;background:var(--line);margin:1rem 0}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:8px;background:#fff}table{border-collapse:collapse;width:100%;font-size:.87rem}th,td{border-bottom:1px solid #e5e9ee;padding:.42rem .5rem;text-align:left;white-space:nowrap}th{background:#f5f7f9;position:sticky;top:0;z-index:2;font-size:.78rem;color:#4e5965}td.num,th.num{text-align:right}tr.absent{opacity:.48;background:#fafafa}.student-name{font-weight:650}
+/* Kontrolltabelle: kompakt, aber gut lesbar */
+#resultsTable{font-variant-numeric:tabular-nums}
+#resultsTable th,#resultsTable td{transition:background-color .08s ease;padding:.38rem .28rem}
+#resultsTable tbody tr:nth-child(odd) td{background:#fff}
+#resultsTable tbody tr:nth-child(even) td{background:#f8fafb}
+#resultsTable tbody tr:nth-child(odd) td.task-block-alt{background:#f4f8fa}
+#resultsTable tbody tr:nth-child(even) td.task-block-alt{background:#edf3f6}
+#resultsTable thead th.task-block-alt{background:#edf3f6}
+#resultsTable th.task-col,#resultsTable td.task-col{width:35px;min-width:35px;max-width:38px;text-align:right}
+#resultsTable th.task-group-start,#resultsTable td.task-group-start{border-left:2px solid #97a8b5}
+#resultsTable th.summary-start,#resultsTable td.summary-start{border-left:2.5px solid #657988}
+#resultsTable th.summary-col{background:#eaf0f4;font-weight:750}
+#resultsTable td.summary-col{background:#f1f5f7!important;font-weight:650}
+#resultsTable th.summary-total,#resultsTable td.summary-total{width:48px;min-width:48px;max-width:48px}
+#resultsTable th.summary-percent,#resultsTable td.summary-percent{width:44px;min-width:44px;max-width:44px}
+#resultsTable th.np-col{width:38px;min-width:38px;max-width:38px;background:#dfeaf0;color:#244d63;text-align:center}
+#resultsTable td.np-col{width:38px;min-width:38px;max-width:38px;background:#eaf3f7!important;color:#173f55;font-weight:800;text-align:center}
+#resultsTable tbody tr:hover td{background:#e9f3f7!important}
+#resultsTable tbody tr.current-row td{background:#e6f1f6!important}
+#resultsTable tbody tr.current-row td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+#resultsTable tbody tr.absent td{background:#f6f7f8!important;color:#7b858e}
+#resultsTable .sticky-name{position:sticky;left:0;z-index:4;width:180px;min-width:180px;max-width:180px;overflow:hidden;text-overflow:ellipsis;background-clip:padding-box;box-shadow:3px 0 4px -4px rgba(24,33,43,.55);padding-left:.5rem}
+#resultsTable .status-col{width:42px;min-width:42px;max-width:42px;text-align:center;font-size:.75rem;padding-left:.15rem;padding-right:.15rem}
+#resultsTable thead .sticky-name{z-index:7;background:#f5f7f9}
+#resultsTable tbody tr:nth-child(odd) .sticky-name{background:#fff}
+#resultsTable tbody tr:nth-child(even) .sticky-name{background:#f8fafb}
+#resultsTable tbody tr:hover .sticky-name{background:#e9f3f7!important}
+#resultsTable tbody tr.current-row .sticky-name{background:#e6f1f6!important}
+#resultsTable tbody tr.absent .sticky-name{background:#f6f7f8!important}
+.task-list{display:flex;flex-direction:column;gap:.42rem}.task-row{display:grid;grid-template-columns:54px minmax(100px,1fr) 82px 105px 132px 90px;gap:.45rem;align-items:center}.task-row .move{display:flex;gap:.2rem}.task-row .move button{padding:.25rem .35rem}.task-aid-check{display:flex;align-items:center;gap:.4rem;white-space:nowrap;font-size:.82rem;color:#46515d;padding:.35rem .4rem}.task-aid-check input{width:18px;height:18px;margin:0}
+.score-layout{display:grid;grid-template-columns:minmax(380px,.72fr) minmax(720px,1.85fr);gap:1rem}.student-head{display:grid;grid-template-columns:minmax(220px,1fr) auto auto;gap:.55rem;align-items:end}.score-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(115px,1fr));gap:.55rem;margin-top:.8rem}.score-box{border:1px solid var(--line);border-radius:8px;padding:.55rem;background:#fafbfc}.score-box.score-group-a{background:#fbfcfd}.score-box.score-group-b{background:#eef5f8}.score-box.score-group-start{border-left:3px solid #7899ab}.score-box label{display:flex;justify-content:space-between;gap:.4rem;font-size:.78rem;color:var(--muted);margin-bottom:.35rem}.score-box input{width:100%;font-size:1.05rem;padding:.55rem}.score-box.invalid{border-color:#c44;background:#fff4f4}.invalid-score{color:#b42318!important;font-weight:700}.total-box{display:flex;gap:1rem;align-items:baseline;padding:.75rem;border-top:1px solid var(--line);margin-top:.75rem}.total-box strong{font-size:1.25rem}.part-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem;margin-top:.55rem}.part-chip{border:1px solid var(--line);border-radius:8px;padding:.55rem .65rem;background:#fafbfc}.part-chip .k{font-size:.72rem;color:var(--muted);font-weight:650}.part-chip .v{font-size:.96rem;font-weight:700;margin-top:.18rem}.part-chip .sub{font-size:.72rem;color:var(--muted);margin-top:.1rem}
+.metric-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.65rem}.metric{border:1px solid var(--line);border-radius:8px;padding:.7rem;background:#fafbfc}.metric .k{font-size:.75rem;color:var(--muted)}.metric .v{font-size:1.12rem;font-weight:700;margin-top:.18rem}.analysis-bars{display:flex;flex-direction:column;gap:.45rem}.bar-row{display:grid;grid-template-columns:64px 1fr 42px;gap:.5rem;align-items:center}.bar-track{height:13px;border-radius:999px;background:#eef1f4;overflow:hidden}.bar-fill{height:100%;background:var(--accent);min-width:0}.bar-label{font-size:.8rem}.bar-value{text-align:right;font-size:.8rem;font-weight:650}
+
+.analysis-switch{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.8rem}.analysis-switch button.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.analysis-hero{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.7rem}.analysis-hero .metric{min-height:78px}
+.analysis-aid-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem}.analysis-aid-card{border:1px solid var(--line);border-radius:10px;padding:.9rem;background:#fafbfc}.analysis-aid-card h3{margin:0 0 .5rem;font-size:.95rem}.analysis-aid-card .big{font-size:1.55rem;font-weight:800}.analysis-aid-card .smallline{font-size:.8rem;color:var(--muted);margin-top:.18rem}.analysis-aid-card .analysis-heat-track{margin-top:.55rem;height:10px}
+.analysis-bar-list{display:grid;gap:.48rem}.analysis-bar-row{display:grid;grid-template-columns:minmax(110px,180px) minmax(160px,1fr) 66px;gap:.65rem;align-items:center}.analysis-bar-label{font-size:.83rem;white-space:normal}.analysis-track{height:13px;border-radius:999px;background:#e8edf1;overflow:hidden}.analysis-fill{height:100%;background:var(--accent);border-radius:999px}.analysis-bar-value{text-align:right;font-size:.82rem;font-weight:700}
+.analysis-class{font-family:"Avenir Next",Avenir,"Helvetica Neue",Arial,sans-serif}.analysis-class-title{font-size:1.55rem;font-weight:800;margin:0}.analysis-class-sub{color:var(--muted);margin:.25rem 0 1rem}.analysis-grade-row{display:grid;grid-template-columns:48px minmax(120px,1fr) 38px;gap:.55rem;align-items:center;margin:.35rem 0}.analysis-grade-track{height:12px;border-radius:999px;background:#e8edf1;overflow:hidden}.analysis-grade-fill{height:100%;background:var(--accent);border-radius:999px}.analysis-np-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:1.2rem}
+.analysis-toolbar{display:flex;gap:.55rem;flex-wrap:wrap;align-items:center;margin-bottom:.75rem}.analysis-warning{margin-bottom:.8rem}
+.analysis-details{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);margin-top:1rem;overflow:hidden}.analysis-details>summary{cursor:pointer;list-style:none;padding:.9rem 1rem;font-weight:700;display:flex;align-items:center;gap:.5rem;background:#fff}.analysis-details>summary::-webkit-details-marker{display:none}.analysis-details>summary::before{content:"▸";font-size:.85rem;color:var(--muted);transition:transform .15s ease}.analysis-details[open]>summary::before{transform:rotate(90deg)}.analysis-details[open]>summary{border-bottom:1px solid var(--line)}.analysis-details-body{padding:1rem}
+.analysis-heat-track{height:12px;border-radius:999px;background:#e7ebef;overflow:hidden;min-width:90px}.analysis-heat-fill{height:100%;border-radius:999px}.analysis-pct-wrap{display:grid;grid-template-columns:minmax(90px,1fr) 58px;gap:.55rem;align-items:center;min-width:170px}.analysis-delta-note{margin-top:.75rem;border:1px solid var(--line);border-radius:8px;padding:.55rem .7rem;background:#f7f8fa;font-size:.84rem;color:#46515d}.analysis-delta-note.attention{border-color:#e3bd70;background:#fff8e8;color:#6e5000;font-weight:650}.delta-cell{font-weight:650}.delta-cell.attention{background:#fff3d6;color:#755400}.student-analysis-table td.heat-cell{font-variant-numeric:tabular-nums}
+.analysis-afb-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.7rem}.analysis-afb-card{border:1px solid var(--line);border-radius:9px;padding:.75rem;background:#fafbfc}.analysis-afb-card .k{font-size:.76rem;color:var(--muted);font-weight:650}.analysis-afb-card .v{font-size:1.15rem;font-weight:800;margin-top:.2rem}.analysis-afb-card .sub{font-size:.76rem;color:var(--muted);margin-top:.15rem}
+.analysis-percent-plot{position:relative;height:210px;border:1px solid var(--line);border-radius:10px;background:linear-gradient(180deg,#fbfcfd,#f6f8fa);overflow:hidden;margin-top:.65rem}.analysis-percent-axis{position:absolute;left:2%;right:2%;bottom:34px;border-top:2px solid #697784}.analysis-percent-tick{position:absolute;bottom:11px;transform:translateX(-50%);font-size:.68rem;color:var(--muted);font-variant-numeric:tabular-nums}.analysis-percent-boundary{position:absolute;top:42px;bottom:34px;border-left:1px dashed #c8d0d8}.analysis-percent-boundary span{position:absolute;left:0;transform:translateX(-50%);font-size:.62rem;font-weight:700;color:#53606d;background:#fff;padding:0 2px;white-space:nowrap}.analysis-percent-dot{position:absolute;width:11px;height:11px;border-radius:50%;background:var(--accent);border:2px solid #fff;box-shadow:0 0 0 1px rgba(36,92,122,.25);transform:translate(-50%,50%)}.analysis-percent-legend{font-size:.76rem;color:var(--muted);margin-top:.45rem}
+.grade-key-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.45rem}.grade-key-grid .field input{width:100%}.actions-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem}.action-card{border:1px solid var(--line);border-radius:8px;padding:.8rem;background:#fafbfc}.action-card h3{margin:0 0 .35rem}.action-card p{font-size:.8rem;color:var(--muted);min-height:2.4em}
+.print-toolbar{display:flex;gap:.55rem;flex-wrap:wrap;align-items:center;margin-bottom:.75rem}.correction-scroll{overflow:auto;padding-bottom:.5rem}.correction-page{width:297mm;min-height:210mm;margin:0 auto 1rem;background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.14);padding:8mm;font-family:Arial,sans-serif;color:#111;display:flex;flex-direction:column}.correction-head{display:flex;justify-content:space-between;gap:8mm;align-items:flex-end;margin-bottom:4mm}.correction-title{font-size:14pt;font-weight:700}.correction-meta{font-size:9pt;text-align:right;line-height:1.35}.correction-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:var(--correction-font-size);line-height:1.05}.correction-table th,.correction-table td{border:1px solid #555;padding:.65mm .45mm;text-align:center;white-space:normal;overflow:hidden;background:#fff;color:#111;position:static}.correction-table th.name-col,.correction-table td.name-col{width:48mm;text-align:left;padding-left:1.2mm}.correction-table thead th{font-weight:700}.correction-table .group-start{border-left:2px solid #222!important}.correction-table tbody td.name-col{font-weight:600}.correction-table tbody tr:nth-child(even) td{background:#f6f6f6}.correction-page-number{font-size:7.5pt;color:#555;text-align:right;margin-top:2mm}.correction-makeup{font-size:8pt;border:1px solid #777;padding:1.3mm 1.7mm;margin:-1mm 0 3mm;line-height:1.25}
+.feedback-layout{display:grid;grid-template-columns:minmax(430px,1.25fr) minmax(330px,.75fr);gap:1rem}.feedback-canvas-wrap{overflow:auto;border:1px solid var(--line);border-radius:8px;background:#edf0f3;padding:.8rem}.feedback-canvas-wrap canvas{display:block;width:min(100%,950px);height:auto;margin:auto;background:#fff;box-shadow:0 1px 5px rgba(0,0,0,.16)}.feedback-actions td:last-child{white-space:normal}.feedback-actions button{margin:.12rem .2rem .12rem 0}.selected-row td{background:#edf5f8}.feedback-date-control{display:flex;align-items:center;gap:.4rem;font-size:.82rem;color:var(--muted);font-weight:600}.feedback-date-control select{min-width:145px}.feedback-date-input{width:145px;min-width:145px}
+
+.workbar{border-top:1px solid #eef1f4;background:#fff}
+.workbar-inner{max-width:1500px;margin:auto;padding:.32rem 1.1rem;display:flex;gap:.38rem;align-items:center;flex-wrap:nowrap;min-height:42px}
+.workbar-label{font-size:.74rem;color:var(--muted);font-weight:700;white-space:nowrap;margin-right:.05rem}
+.workbar select{min-width:260px;max-width:500px;height:34px;padding:.3rem 1.9rem .3rem .55rem;font-size:.85rem;line-height:1.1;flex:0 1 500px;border-radius:7px;background-color:#fbfcfd}
+.workbar button{height:34px;padding:.3rem .58rem;white-space:nowrap;font-size:.82rem}
+.workbar .work-danger{padding-left:.52rem;padding-right:.52rem}
+
+/* Responsive App-Leiste: Darstellung richtet sich nach verfügbarem Platz, nicht nach Gerät */
+header.app{border-bottom:1px solid var(--line)}
+.appbar{max-width:1900px;margin:0 auto;padding:.38rem 1rem;display:flex;align-items:center;gap:.56rem;min-height:54px;background:#fff}
+.app-brand{display:flex;align-items:center;gap:.48rem;flex:0 0 auto;white-space:nowrap}
+.app-mark{display:grid;place-items:center;width:36px;height:36px;border-radius:8px;background:var(--accent);color:#fff;font-weight:800;font-size:1.1rem;line-height:1}
+.app-name{font-weight:800;font-size:1rem;letter-spacing:-.01em}
+.appbar>#workSelect{flex:0 1 340px;min-width:235px;max-width:390px;height:36px;padding:.34rem 1.85rem .34rem .58rem;font-size:.86rem;font-weight:650;background:#fff}
+nav.tabs.top-tabs{flex:1 1 auto;min-width:0;max-width:none;margin:0;padding:0;border:0;background:transparent;display:flex;gap:.05rem;overflow:visible;flex-wrap:nowrap}
+nav.tabs.top-tabs::-webkit-scrollbar{display:none}
+nav.tabs.top-tabs button{padding:.57rem .58rem;border-bottom-width:3px;font-size:.82rem;white-space:nowrap}
+.app-actions{display:flex;align-items:center;gap:.34rem;flex:0 0 auto;margin-left:auto}
+.app-actions #exportStatusBadge{max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.status-short,.checkpoint-short{display:none}
+.wide-only{display:none!important}
+.checkpoint-compact{height:36px;padding:.36rem .58rem;font-size:.82rem;white-space:nowrap;font-weight:600}
+.more-menu{position:relative;flex:0 0 auto}
+.more-menu summary{list-style:none;width:38px;height:36px;border:1px solid #bfc8d2;border-radius:7px;background:#fff;display:grid;place-items:center;cursor:pointer;font-weight:800;letter-spacing:.08em;color:#46515d;user-select:none}
+.more-menu summary::-webkit-details-marker{display:none}
+.more-menu[open] summary{background:#f4f7f9}
+.more-panel{position:absolute;right:0;top:calc(100% + 6px);z-index:80;width:235px;padding:.45rem;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 12px 35px rgba(0,0,0,.16);display:grid;gap:.3rem}
+.more-panel button{width:100%;text-align:left;padding:.5rem .58rem;background:#fff;border-color:transparent}
+.more-panel button:hover{background:#f4f7f9}
+.more-panel .danger{color:var(--danger)}
+.more-status{border-top:1px solid #e8ecf0;margin-top:.15rem;padding:.45rem .3rem .1rem;display:flex;gap:.3rem;flex-wrap:wrap}
+.more-status .badge{font-size:.7rem}
+.export-reminder{border-top:1px solid #ead49d}
+
+/* Breit: Mac/Full-Screen-Desktop – mehr Direktaktionen und ausgeschriebene Texte */
+@media screen and (min-width:1400px){
+  .appbar{gap:.68rem;padding:.44rem 1.12rem;min-height:58px}
+  .app-name{display:inline}
+  .appbar>#workSelect{flex-basis:390px;min-width:300px;max-width:430px;height:38px;font-size:.88rem}
+  nav.tabs.top-tabs button{font-size:.83rem;padding:.6rem .66rem}
+  .wide-only{display:inline-flex!important}
+  #moreMenu #newWorkBtn{display:none}
+  .checkpoint-compact{height:38px;padding:.4rem .72rem}
+  .app-actions #exportStatusBadge{max-width:220px}
+}
+
+/* Wenn die Kopfzeile eng wird, wandert die Bereichsnavigation vollständig in eine zweite Zeile.
+   Kein horizontales Scrollen der Hauptnavigation. */
+@media screen and (max-width:1650px){
+  .appbar{flex-wrap:wrap;row-gap:.16rem}
+  nav.tabs.top-tabs{order:5;flex:1 0 100%;width:100%;border-top:1px solid #eef1f4;padding-top:.08rem;overflow:visible;flex-wrap:wrap}
+  nav.tabs.top-tabs button{flex:0 0 auto}
+  .app-actions{margin-left:auto}
+}
+
+/* Mittelbreit: typisches iPad quer / kleineres Desktop-Fenster */
+@media screen and (max-width:1399px){
+  .appbar{gap:.4rem;padding-left:.68rem;padding-right:.68rem}
+  .app-name{display:none}
+  .appbar>#workSelect{flex-basis:315px;min-width:245px;max-width:350px}
+  nav.tabs.top-tabs button{font-size:.78rem;padding:.52rem .45rem}
+  .status-full{display:none}
+  .status-short{display:inline}
+  .checkpoint-full{display:none}
+  .checkpoint-short{display:inline}
+  .app-actions #exportStatusBadge{max-width:112px;font-size:.7rem;padding:.26rem .45rem}
+  .checkpoint-compact{padding:.34rem .5rem;font-size:.78rem}
+  .more-menu summary{width:36px;height:36px}
+}
+
+/* Schmal: Auswahl darf wachsen; Status wird zugunsten der Bedienbarkeit ausgeblendet. */
+@media screen and (max-width:980px){
+  .appbar{align-items:center}
+  .appbar>#workSelect{flex:1 1 280px;max-width:none;min-width:210px}
+  .app-actions{margin-left:0}
+  .app-actions #exportStatusBadge{display:none}
+  nav.tabs.top-tabs{gap:.02rem}
+}
+@media screen and (max-width:620px){
+  .app-mark{width:34px;height:34px}
+  nav.tabs.top-tabs button{font-size:.75rem;padding:.46rem .38rem}
+}
+dialog.app-dialog{border:1px solid var(--line);border-radius:12px;box-shadow:0 18px 60px rgba(0,0,0,.22);padding:0;max-width:min(650px,calc(100vw - 32px));width:100%;color:var(--ink);background:#fff}
+dialog.app-dialog::backdrop{background:rgba(20,28,36,.38)}
+.dialog-body{padding:1rem 1rem .65rem}.dialog-body h2{font-size:1.05rem;margin:0 0 .45rem}.dialog-body p{font-size:.88rem;color:#46515d;line-height:1.45;margin:.25rem 0 .8rem}
+.dialog-options{display:grid;gap:.55rem;margin:.8rem 0}.dialog-option{display:flex;gap:.55rem;align-items:flex-start;border:1px solid var(--line);border-radius:8px;padding:.65rem;background:#fafbfc}.dialog-option input{margin-top:.12rem}.dialog-option span{line-height:1.35}
+.dialog-actions{display:flex;justify-content:flex-end;gap:.55rem;padding:.75rem 1rem;border-top:1px solid var(--line);background:#f8fafb;border-radius:0 0 12px 12px}
+@media screen and (max-width:900px){.workbar-inner{padding:.28rem .8rem;gap:.3rem}.workbar-label{display:none}.workbar select{min-width:0;max-width:none;flex:1 1 auto}.workbar button{flex:0 0 auto}}
+@media screen and (max-width:520px){.workbar-inner{padding-left:.55rem;padding-right:.55rem}.workbar button{padding-left:.46rem;padding-right:.46rem;font-size:.78rem}.workbar .work-delete-text{display:none}}
+#toast{position:fixed;right:18px;bottom:18px;z-index:100;background:#18212b;color:#fff;border-radius:8px;padding:.65rem .8rem;font-size:.85rem;box-shadow:0 3px 14px rgba(0,0,0,.2);opacity:0;pointer-events:none;transform:translateY(8px);transition:.18s}#toast.show{opacity:1;transform:none}
+#printReport{display:none;background:#fff;color:#111;font-family:Arial,sans-serif}.report-page{page-break-after:always}.report-page:last-child{page-break-after:auto}.report-title{font-size:18pt;font-weight:700;margin:0 0 2mm}.report-meta{font-size:9.5pt;color:#444;margin-bottom:7mm}.report-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:3mm;margin-bottom:7mm}.report-metric{border:1px solid #aaa;padding:3mm}.report-metric .k{font-size:8pt;color:#555}.report-metric .v{font-size:14pt;font-weight:700;margin-top:1mm}.report-section{margin:0 0 7mm;break-inside:avoid}.report-section h2{font-size:12pt;margin:0 0 3mm}.report-table{width:100%;border-collapse:collapse;font-size:8.5pt}.report-table th,.report-table td{border:1px solid #aaa;padding:1.5mm 2mm;background:#fff;color:#111;position:static;white-space:normal}.report-table thead{display:table-header-group}.report-table tr{break-inside:avoid}
+@media screen and (max-width:1366px){
+  /* Auf iPad/kleineren Desktops nur die arbeitsintensiven Bereiche stapeln.
+     Die allgemeinen .grid-Layouts bleiben bewusst mehrspaltig. */
+  .score-layout,.feedback-layout{grid-template-columns:1fr}
+  .student-head{grid-template-columns:minmax(260px,1fr) 84px 84px}
+  .student-head button{padding:.42rem .5rem;min-width:84px;white-space:nowrap}
+  .score-grid{grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:.42rem}
+  .score-box{padding:.4rem}.score-box input{padding:.42rem .45rem;min-height:38px}
+  .metric-row{grid-template-columns:repeat(2,1fr)}
+  .grade-key-grid{grid-template-columns:repeat(2,1fr)}
+  .actions-grid{grid-template-columns:1fr}
+  .task-row{grid-template-columns:50px minmax(100px,1fr) 78px 96px 126px 78px}.analysis-hero{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media screen and (max-width:1100px){
+  /* Hochformat / schmalere Fenster: große Zweispaltenbereiche untereinander. */
+  .grid.two{grid-template-columns:1fr}
+  .grid.four{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media screen and (max-width:700px){
+  main{padding:.8rem}.header-inner{align-items:flex-start;flex-direction:column}
+  .grid.three,.grid.four{grid-template-columns:1fr}
+  .student-head{grid-template-columns:1fr 72px 72px;gap:.38rem}
+  .student-head .field{grid-column:auto}
+  .student-head button{width:auto;min-width:72px;padding:.38rem .35rem;font-size:.84rem}
+  .score-grid{grid-template-columns:repeat(auto-fill,minmax(88px,1fr))}
+  .metric-row{grid-template-columns:1fr 1fr}.grade-key-grid{grid-template-columns:1fr 1fr}
+  .task-row{grid-template-columns:44px minmax(88px,1fr) 76px 82px}.storage-status-grid{grid-template-columns:1fr}
+  .task-aid-check{grid-column:2/4;padding-left:0}.task-row [data-del-task]{grid-column:4}.task-row select{font-size:.8rem}.analysis-hero,.analysis-aid-grid,.analysis-afb-grid,.part-summary{grid-template-columns:1fr}.analysis-np-list{grid-template-columns:1fr}.analysis-bar-row{grid-template-columns:90px minmax(100px,1fr) 54px}
+}
+@media print{
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  body{background:#fff}.no-print,header.app,nav.tabs,#toast{display:none!important}main{max-width:none;padding:0;margin:0}
+  body.print-correction main>.view:not(#view-correction){display:none!important}body.print-correction #view-correction{display:block!important}body.print-correction .print-toolbar,body.print-correction #correctionNotice,body.print-correction #iosCorrectionHint{display:none!important}body.print-correction .correction-scroll{overflow:visible;padding:0}.correction-page{width:auto;min-height:0;margin:0;padding:0;box-shadow:none;page-break-after:always}.correction-page:last-child{page-break-after:auto}
+  body.print-report main,body.print-report header,body.print-report nav{display:none!important}body.print-report #printReport{display:block!important}
+  body.print-analysis main>.view:not(#view-analysis){display:none!important}body.print-analysis #view-analysis{display:block!important;padding:0!important}body.print-analysis #analysisTeacherView,body.print-analysis .analysis-switch,body.print-analysis .analysis-toolbar,body.print-analysis #analysisNotice,body.print-analysis .analysis-grade-key{display:none!important}body.print-analysis #analysisClassView{display:block!important}body.print-analysis #view-analysis>.card{border:0!important;box-shadow:none!important;padding:0!important}body.print-analysis .card{break-inside:avoid}.analysis-class{font-size:10pt}
+}
+</style>
+<style id="dynamicPageStyle"></style>
+</head>
+<body>
+<header class="app no-print">
+  <div class="appbar">
+    <div class="app-brand" title="Oberstufenklausuren – Auswertung">
+      <span class="app-mark" aria-hidden="true">Σ</span>
+      <span class="app-name">Oberstufenklausuren</span>
+    </div>
+    <select id="workSelect" aria-label="Lokale Klausur auswählen"></select>
+    <nav class="tabs top-tabs no-print" aria-label="Bereiche">
+      <button data-view="setup" class="active">1 · Einrichten</button>
+      <button data-view="correction">2 · Korrektur</button>
+      <button data-view="entry">3 · Punkte</button>
+      <button data-view="analysis">4 · Auswertung</button>
+      <button data-view="feedback">5 · Rückgabe</button>
+      <button data-view="export">6 · Export</button>
+    </nav>
+    <div class="app-actions">
+      <span class="badge status-neutral" id="exportStatusBadge"><span class="status-full">Exportzeitpunkt unbekannt</span><span class="status-short">Export ?</span></span>
+      <button class="small primary wide-only" id="newWorkHeaderBtn">+ Neue Klausur</button>
+      <button class="small checkpoint-compact" id="saveProjectBtn" title="Checkpoint exportieren"><span class="checkpoint-full">Checkpoint exportieren</span><span class="checkpoint-short">Check ↑</span></button>
+      <details class="more-menu" id="moreMenu">
+        <summary aria-label="Weitere Aktionen" title="Weitere Aktionen">•••</summary>
+        <div class="more-panel">
+          <button id="newWorkBtn">+ Neue Klausur</button>
+          <button id="loadProjectBtn">Checkpoint laden …</button>
+          <button class="danger" id="deleteWorkBtn">Klausur löschen …</button>
+          <div class="more-status">
+            <span class="badge hidden" id="iosBadge">iPad/iPhone</span>
+            <span class="badge" id="autosaveBadge">lokaler Arbeitsstand</span>
+          </div>
+          <input class="hidden" type="file" id="projectFile" accept=".oka,.mka,.json,application/json">
+        </div>
+      </details>
+    </div>
+  </div>
+  <div class="export-reminder hidden" id="exportReminder"><div class="reminder-inner"><span id="exportReminderText">Mehrere Änderungen wurden noch nicht exportiert.</span><button class="small primary" id="exportReminderBtn">Jetzt exportieren</button></div></div>
+</header>
+<main>
+<section class="view active" id="view-setup">
+  <div class="grid two">
+    <div class="card">
+      <h2>Klausur</h2>
+      <div class="grid three">
+        <div class="field"><label>Fach</label><input id="subjectName" placeholder="z. B. Mathematik"></div>
+        <div class="field"><label>Kurs</label><input id="className" placeholder="z. B. M12LK"></div>
+        <div class="field"><label>Kursart</label><select id="courseType"><option value="">–</option><option>LK</option><option>GK</option></select></div>
+        <div class="field"><label>Halbjahr</label><input id="semester" placeholder="z. B. Q1"></div>
+        <div class="field"><label>Bezeichnung</label><input id="examTitle" placeholder="z. B. 1. Klausur"></div>
+        <div class="field"><label>Datum</label><input id="examDate" type="date"></div>
+      </div>
+      <div id="relationNotice" class="note" style="display:none;margin-top:.75rem"></div>
+      <div class="divider"></div>
+      <h3>Schülerliste</h3>
+      <div class="note"><strong>Empfohlen:</strong> CSV-Datei mit den Spalten <code>Kurs</code>, <code>Nachname</code>, <code>Vorname</code>. Die Spalte <code>Kurs</code> wird bewusst ignoriert. Semikolon und Komma werden automatisch erkannt.</div>
+      <div class="row" style="margin-top:.65rem"><input id="studentCsvFile" type="file" accept=".csv,text/csv"><button class="primary" id="importCsvBtn">CSV importieren</button></div>
+      <details style="margin-top:.8rem"><summary class="tiny muted" style="cursor:pointer">Alternative: Namen aus zwei Excel-Spalten einfügen</summary>
+        <div class="grid two" style="margin-top:.55rem"><div class="field"><label>Nachnamen</label><textarea id="studentLastPaste" rows="6"></textarea></div><div class="field"><label>Vornamen</label><textarea id="studentFirstPaste" rows="6"></textarea></div></div>
+        <div class="row" style="margin-top:.5rem"><button id="importStudentsBtn">Liste übernehmen</button><button id="addStudentBtn">Einzeln hinzufügen</button></div>
+      </details>
+      <div class="row" style="margin-top:.7rem"><span class="muted tiny"><strong>Sortieren:</strong></span><button class="small" id="sortStudentsLastBtn">Nachname A–Z</button><button class="small" id="sortStudentsFirstBtn">Vorname A–Z</button><button class="small" id="sampleBtn">Testdaten</button></div>
+      <div class="table-wrap" style="margin-top:.8rem;max-height:330px"><table><thead><tr><th>Nachname</th><th>Vorname</th><th style="text-align:center">Fehlt / Nachschreiber</th><th></th></tr></thead><tbody id="studentTableBody"></tbody></table></div>
+      <div class="note" style="margin-top:.7rem">
+        <div class="row" style="justify-content:space-between;align-items:center">
+          <div><strong>Nachschreiber:</strong> <span id="makeupList" class="muted">keine</span></div>
+          <button class="small" id="createMakeupProjectBtn" disabled>Nachschreibeklausur anlegen</button>
+        </div>
+        <div class="tiny muted" style="margin-top:.35rem">Legt mit den markierten Nachschreibern eine neue browserlokale Klausur an und wechselt direkt dorthin. Sie gelten darin als reguläre Mitschreibende; Fach, Kurs, Kursart, Halbjahr und Notenpunkteschlüssel werden übernommen, Aufgaben und Klausurdatum starten leer. Der Bezug zur Ursprungsklausur bleibt gespeichert. Beim späteren Checkpoint-Export entsteht eine eigene <code>.oka</code>-Datei mit Datum und Uhrzeit im Dateinamen.</div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Aufgaben und Rohpunkte</h2>
+      <div class="field"><label>Schnelleingabe – eine Teilaufgabe pro Zeile</label><textarea id="taskPaste" rows="10" placeholder="1a  4  I&#10;1b  6  I&#10;2a  5  II&#10;2b  8  III"></textarea></div>
+      <div class="row" style="margin-top:.55rem"><button class="primary" id="importTasksBtn">Liste übernehmen</button><span class="muted tiny">Schnelleingabe: <code>1a 4 I</code> oder <code>1a 4 AFB I</code>. Ohne AFB-Angabe bleibt die Zuordnung leer.</span></div>
+      <h3>Kontrolle / AFB / Hilfsmittel</h3><div class="task-list" id="taskList"></div><div class="divider"></div><div class="row"><strong>Gesamt:</strong><span id="maxTotal">0</span><span>Punkte</span></div>
+      <div class="note" style="margin-top:.8rem">AFB ist optional. Für die Hilfsmittelauswertung gilt wie in der Mittelstufe: <strong>Haken = ohne Hilfsmittel</strong>, kein Haken = mit Hilfsmitteln. Ohne AFB-Zuordnung funktioniert die übrige Auswertung weiterhin vollständig.</div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:1rem"><h2>Unterschrift der Lehrkraft (optional)</h2><div class="row"><input id="signatureFile" type="file" accept="image/png,image/jpeg,image/webp"><button id="removeSignatureBtn" class="small">Entfernen</button><span class="muted tiny">Wird nur lokal im Browser gespeichert und kann auf dem Rückmeldungszettel erscheinen.</span></div><img id="signaturePreview" style="display:none;max-height:55px;max-width:220px;margin-top:.7rem" alt="Unterschrift"></div>
+</section>
+
+<section class="view" id="view-correction">
+  <div class="print-toolbar no-print"><button class="primary" id="printCorrectionBtn">Korrekturbogen drucken / PDF</button><span class="badge">DIN A4 quer</span><span class="badge">bis 30 Mitschreibende pro Seite</span><span class="badge">Nachschreiber ausgeschlossen</span></div>
+  <div id="iosCorrectionHint" class="note no-print" style="display:none;margin-bottom:.8rem"><strong>iPad/iPhone:</strong> Safari-Druckdialog öffnen; für PDF die Vorschau vergrößern und anschließend teilen.</div>
+  <div id="correctionNotice" class="note warn no-print" style="display:none;margin-bottom:.8rem"></div>
+  <div class="correction-scroll"><div id="correctionPages"></div></div>
+</section>
+
+<section class="view" id="view-entry">
+  <div class="score-layout">
+    <div class="card"><h2>Punkte eingeben</h2><div class="student-head"><div class="field"><label>Schüler/in</label><select id="studentSelect"></select></div><button id="prevStudentBtn">← vorher</button><button id="nextStudentBtn">weiter →</button></div><div class="score-grid" id="scoreGrid"></div><div class="total-box"><span>Summe</span><strong id="studentTotal">0</strong><span>von <span id="studentMax">0</span> P.</span><span style="margin-left:auto">Notenpunkte: <strong id="studentGrade">–</strong></span></div><div class="part-summary"><div class="part-chip"><div class="k">ohne Hilfsmittel</div><div class="v" id="studentNoAid">–</div><div class="sub" id="studentNoAidSub"></div></div><div class="part-chip"><div class="k">mit Hilfsmitteln</div><div class="v" id="studentWithAid">–</div><div class="sub" id="studentWithAidSub"></div></div></div></div>
+    <div class="card"><h2>Kontrolltabelle</h2><div class="table-wrap" style="max-height:72vh"><table id="resultsTable"><thead id="resultsHead"></thead><tbody id="resultsBody"></tbody></table></div></div>
+  </div>
+</section>
+
+<section class="view" id="view-analysis">
+  <div class="analysis-toolbar no-print">
+    <button class="primary" id="analysisPrintBtn">Klassenansicht drucken / PDF</button>
+    <button id="printReportBtn">Auswertungsbericht drucken / PDF</button>
+    <button id="analysisJsonBtn">Auswertung als JSON</button>
+    <button id="analysisCsvBtn">Auswertung als CSV</button>
+    <span class="badge">Klassenansicht und Auswertungsexporte ohne Schülernamen</span>
+  </div>
+  <div id="analysisNotice" class="note warn analysis-warning no-print" style="display:none"></div>
+  <div class="analysis-switch no-print">
+    <button class="active" data-analysis-mode="teacher">Lehrkraftsicht</button>
+    <button data-analysis-mode="class">Schüler-/Klassenansicht</button>
+  </div>
+
+  <div id="analysisTeacherView">
+    <div class="card">
+      <h2>Lehrkraftsicht</h2>
+      <div class="analysis-hero" id="analysisTeacherMetrics"></div>
+      <div class="analysis-aid-grid" style="margin-top:1rem" id="analysisTeacherAid"></div>
+      <div class="analysis-afb-grid" style="margin-top:1rem" id="analysisTeacherAfb"></div>
+    </div>
+
+    <div class="card" style="margin-top:1rem">
+      <h2>Prozentverteilung</h2>
+      <div id="analysisPercentPlot" class="analysis-percent-plot"></div>
+      <div class="analysis-percent-legend">Punkte = vollständig ausgewertete Klausuren · gestrichelte Linien = prozentuale Untergrenzen für 15 bis 1 Notenpunkt.</div>
+    </div>
+
+    <details class="analysis-details" open>
+      <summary>Aufgabenanalyse</summary>
+      <div class="analysis-details-body"><div class="table-wrap"><table><thead><tr><th>Aufgabe</th><th>AFB</th><th>Bereich</th><th class="num">Rohpunkte</th><th class="num">Ø Punkte</th><th>Ø %</th></tr></thead><tbody id="analysisTaskBody"></tbody></table></div></div>
+    </details>
+
+    <details class="analysis-details">
+      <summary>AFB-Analyse</summary>
+      <div class="analysis-details-body"><div class="table-wrap"><table><thead><tr><th>AFB</th><th class="num">max.</th><th class="num">Ø P.</th><th>Ø %</th></tr></thead><tbody id="analysisAfbBody"></tbody></table></div></div>
+    </details>
+
+    <details class="analysis-details">
+      <summary>Individuelle Auswertung</summary>
+      <div class="analysis-details-body"><div class="table-wrap"><table class="student-analysis-table"><thead><tr><th>Name</th><th class="num">Gesamt</th><th>Gesamt %</th><th class="num">NP</th><th class="num">ohne HM</th><th>ohne HM %</th><th class="num">mit HM</th><th>mit HM %</th><th class="num">Δ HM</th></tr></thead><tbody id="analysisStudentBody"></tbody></table></div></div>
+    </details>
+  </div>
+
+  <div id="analysisClassView" class="analysis-class" style="display:none">
+    <div class="card">
+      <h2 class="analysis-class-title" id="analysisClassTitle">Auswertung</h2>
+      <div class="analysis-class-sub" id="analysisClassSubtitle"></div>
+      <div class="analysis-hero" id="analysisClassMetrics"></div>
+      <div class="analysis-aid-grid" style="margin-top:1rem" id="analysisClassAid"></div>
+      <div class="analysis-afb-grid" style="margin-top:1rem" id="analysisClassAfb"></div>
+    </div>
+    <div class="grid two" style="margin-top:1rem">
+      <div class="card"><h2>Notenpunktverteilung</h2><div id="analysisNpBars" class="analysis-np-list"></div></div>
+      <div class="card"><h2>Erfolg je Aufgabe</h2><div class="analysis-bar-list" id="analysisTaskBars"></div></div>
+    </div>
+  </div>
+
+  <div class="card analysis-grade-key" style="margin-top:1rem"><h2>Notenpunkteschlüssel</h2><div class="note">Die Untergrenze jedes Notenpunkts kann angepasst werden; 0 NP ist automatisch alles unterhalb der 1-NP-Grenze.</div><div class="grade-key-grid" id="gradeKeyGrid" style="margin-top:.75rem"></div></div>
+</section>
+
+<section class="view" id="view-feedback">
+  <div class="print-toolbar no-print"><button class="primary" id="downloadAllFeedbackBtn">Alle Rückmeldungen als ZIP</button><span class="badge">eine PDF pro Schüler</span><span class="badge">PNG-Zwischenablage mit Fallback</span><label class="feedback-date-control"><span>Datum auf Rückmeldung</span><select id="feedbackDateMode"><option value="auto">heute automatisch</option><option value="manual">manuell</option></select></label><input class="feedback-date-input" id="feedbackDateInput" type="date" disabled aria-label="Manuelles Datum auf der Rückmeldung"><span class="badge" id="feedbackDatePreview">–</span></div>
+  <div id="feedbackNotice" class="note warn no-print" style="display:none;margin-bottom:.8rem"></div>
+  <div class="feedback-layout">
+    <div class="card"><h2>Rückmeldungen</h2><div class="table-wrap"><table class="feedback-actions"><thead><tr><th>Schüler/in</th><th class="num">Punkte</th><th class="num">NP</th><th>Aktionen</th></tr></thead><tbody id="feedbackTableBody"></tbody></table></div></div>
+    <div class="card"><h2>Vorschau</h2><div class="feedback-canvas-wrap"><canvas id="feedbackCanvas" width="1900" height="720"></canvas></div><div class="row" style="margin-top:.7rem"><button id="copySelectedFeedbackBtn" class="primary">Bild kopieren</button><button id="pdfSelectedFeedbackBtn">PDF</button></div><div class="tiny muted" style="margin-top:.5rem">Die Vorschau ist bereits die tatsächliche PNG/PDF-Vorlage. Bei lokaler Nutzung kann Safari die Bild-Zwischenablage blockieren; dann wird stattdessen eine PNG-Datei bereitgestellt.</div></div>
+  </div>
+</section>
+
+<section class="view" id="view-export">
+  <div class="card">
+    <h2>Arbeitsstand &amp; Checkpoint</h2>
+    <div class="storage-status-grid">
+      <div class="storage-status-item"><div class="k">Letzte Änderung</div><div class="v" id="updatedAtDisplay">–</div></div>
+      <div class="storage-status-item"><div class="k">Letzter Checkpoint-Export</div><div class="v" id="exportedAtDisplay">–</div></div>
+      <div class="storage-status-item"><div class="k">Exportstatus</div><div class="v" id="exportStateDisplay">Exportzeitpunkt unbekannt</div></div>
+    </div>
+    <div class="note"><strong>Speicherlogik:</strong> Mehrere Klausuren werden getrennt browserlokal verwaltet und können oben ausgewählt werden. Eine <code>.oka</code>-Datei enthält weiterhin genau <strong>eine</strong> Klausur und ist ein bewusst erzeugter portabler Checkpoint. Der Dateiname erhält beim Export automatisch den lokalen Zeitstempel <code>_export-YYYYMMDD-HHMMSS</code>.</div>
+    <div class="row" style="margin-top:.8rem"><button class="primary" id="exportCheckpointBtn">Checkpoint jetzt exportieren</button><span class="muted tiny">Der Export verändert den inhaltlichen Arbeitsstand nicht. Arbeits- und Exportdateien erhalten automatisch <code>_export-YYYYMMDD-HHMMSS</code>.</span></div>
+  </div>
+  <div class="card" style="margin-top:1rem"><h2>Daten herausgeben</h2><div class="actions-grid"><div class="action-card"><h3>CSV vollständig</h3><p>Namen, Status und alle Teilaufgaben. Nachschreiber bleiben enthalten; Gesamt, Prozent und Notenpunkte bleiben bei ihnen leer.</p><button id="csvBtn">CSV sichern</button></div><div class="action-card"><h3>Für Excel</h3><p>Nachname, Vorname und danach nur die Zahlenwerte der Teilaufgaben.</p><button id="copyExcelBtn">Mit Namen kopieren</button></div><div class="action-card"><h3>Nur Zahlen</h3><p>Nur der Punkteblock ohne Namen.</p><button id="copyNumbersBtn">Nur Zahlen kopieren</button></div></div><div id="iosExportHint" class="note" style="display:none;margin-top:.9rem"><strong>iPad/iPhone:</strong> Checkpoints, CSV-/Auswertungsdateien sowie PDFs und ZIPs werden über den iPadOS-Teilen-Dialog ausgegeben. Dort <strong>In Dateien sichern</strong> wählen und anschließend den Zielordner festlegen.</div><div class="divider"></div><div class="note">Der Checkpoint <code>.oka</code> ist nicht verschlüsselt und enthält personenbezogene Daten. Er sollte entsprechend geschützt gespeichert werden.</div><div class="row" style="margin-top:.8rem"><button id="clearAutosaveBtn" class="danger">Aktuelle lokale Klausur löschen</button><span class="muted tiny">Entfernt nur die aktuell ausgewählte browserlokale Klausur. Exportierte <code>.oka</code>-Dateien bleiben unverändert.</span></div></div>
+</section>
+<dialog class="app-dialog no-print" id="newWorkDialog">
+  <div class="dialog-body">
+    <h2>Neue Klausur anlegen</h2>
+    <p>Die aktuelle Klausur bleibt erhalten. Wähle, was in die neue Klausur übernommen werden soll. Bezeichnung, Datum, erzielte Punkte, Nachschreiberstatus und eine etwaige Nachschreiber-Verknüpfung werden nie übernommen.</p>
+    <div class="dialog-options">
+      <label class="dialog-option"><input type="checkbox" id="copyCourseChk" checked><span><strong>Kursdaten</strong><br><span class="tiny muted">Fach, Kurs, Kursart und Halbjahr übernehmen.</span></span></label>
+      <label class="dialog-option"><input type="checkbox" id="copyStudentsChk" checked><span><strong>Schülerliste</strong><br><span class="tiny muted">Namen übernehmen; alle starten ohne Punkte und ohne Nachschreiberstatus.</span></span></label>
+      <label class="dialog-option"><input type="checkbox" id="copyTasksChk"><span><strong>Aufgabenstruktur</strong><br><span class="tiny muted">Aufgaben, Rohpunkte, AFB und Hilfsmittel-Zuordnung übernehmen.</span></span></label>
+      <label class="dialog-option"><input type="checkbox" id="copyGradingChk" checked><span><strong>Notenpunkteschlüssel</strong><br><span class="tiny muted">Die aktuellen Prozentgrenzen 15–1 NP übernehmen.</span></span></label>
+    </div>
+  </div>
+  <div class="dialog-actions"><button id="cancelNewWorkBtn">Abbrechen</button><button class="primary" id="createNewWorkBtn">Neue Klausur anlegen</button></div>
+</dialog>
+
+</main>
+<div id="printReport"></div><div id="toast"></div>
+<script>
+(()=>{
+'use strict';
+const LEGACY_AUTOSAVE_KEY='oberstufe_klausur_v01_autosave';
+const SIGNATURE_KEY='oberstufe_klausur_v01_signature';
+const LEGACY_REMINDER_KEY='oberstufe_klausur_v01_export_reminder';
+const WORK_INDEX_KEY='oberstufe_klausur_v02_work_index';
+const CURRENT_WORK_KEY='oberstufe_klausur_v02_current_work';
+const WORK_PREFIX='oberstufe_klausur_v02_work_';
+const REMINDER_PREFIX='oberstufe_klausur_v02_export_reminder_';
+const PROJECT_SCHEMA='oberstufen-klausur-dashboard';
+const PROJECT_FORMAT_VERSION=2;
+const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const IS_MAC=!IS_IOS&&(/Macintosh|Mac OS X/.test(navigator.userAgent)||navigator.platform==='MacIntel');
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const uid=()=>Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-4);
+const fmt=n=>Number.isFinite(Number(n))?Number(n).toLocaleString('de-DE',{minimumFractionDigits:(Math.round(Number(n)*2)%2?1:0),maximumFractionDigits:1}):'–';
+const pct=n=>Number.isFinite(Number(n))?Number(n).toLocaleString('de-DE',{maximumFractionDigits:1})+' %':'–';
+const roundHalf=n=>Math.round(Number(n)*2)/2;
+const defaultGradeThresholds={15:95,14:90,13:85,12:80,11:75,10:70,9:65,8:60,7:55,6:50,5:45,4:40,3:33,2:27,1:20};
+let state=null;
+let signatureData=localStorage.getItem(SIGNATURE_KEY)||'';let autosaveTimer=null;let toastTimer=null;
+let reminderState={changeCount:0,firstUnexportedAt:null};
+let workIndex=[];let currentWorkId=null;
+const workKey=id=>WORK_PREFIX+id;
+const reminderKey=id=>REMINDER_PREFIX+id;
+function blankState(){return{meta:{subject:'Mathematik',className:'',courseType:'',semester:'',title:'',date:localDateIso()},students:[],tasks:[],gradeThresholds:{...defaultGradeThresholds},selectedStudentId:null,feedbackStudentId:null,feedbackDateMode:'auto',feedbackDate:'',relation:null,updatedAt:null,exportedAt:null};}
+function normalizeState(obj){
+ const src=obj&&typeof obj==='object'?obj:{};
+ const base=blankState(),meta={...base.meta,...(src.meta||{})};
+ const students=Array.isArray(src.students)?src.students:[];
+ const tasks=Array.isArray(src.tasks)?src.tasks.map(t=>({...t,afb:t.afb||'',aidMode:t.aidMode==='no'?'no':'yes'})):[];
+ const relation=src.relation&&src.relation.type==='makeup'?{type:'makeup',parentTitle:typeof src.relation.parentTitle==='string'?src.relation.parentTitle:'',parentDate:typeof src.relation.parentDate==='string'?src.relation.parentDate:''}:null;
+ return{meta,students,tasks,gradeThresholds:{...defaultGradeThresholds,...(src.gradeThresholds||{})},selectedStudentId:src.selectedStudentId||students[0]?.id||null,feedbackStudentId:src.feedbackStudentId||src.selectedStudentId||students[0]?.id||null,feedbackDateMode:src.feedbackDateMode==='manual'?'manual':'auto',feedbackDate:typeof src.feedbackDate==='string'?src.feedbackDate:'',relation,updatedAt:src.updatedAt||src.modifiedAt||null,exportedAt:src.exportedAt||null};
+}
+state=blankState();
+function loadWorkIndex(){try{const x=JSON.parse(localStorage.getItem(WORK_INDEX_KEY)||'[]');return Array.isArray(x)?x:[];}catch(e){return[];}}
+function saveWorkIndex(){try{localStorage.setItem(WORK_INDEX_KEY,JSON.stringify(workIndex));}catch(e){}}
+function workDisplayName(s=state){const bits=[s?.meta?.className,s?.meta?.semester].filter(Boolean);bits.push(s?.meta?.title||'Neue Klausur');const label=bits.join(' · ')||'Neue Klausur';return s?.relation?.type==='makeup'?`↳ ${label}`:label;}
+function workIndexMeta(id=currentWorkId,s=state){return{id,label:workDisplayName(s),className:s?.meta?.className||'',semester:s?.meta?.semester||'',title:s?.meta?.title||'',date:s?.meta?.date||'',relationType:s?.relation?.type||'',updatedAt:s?.updatedAt||null};}
+function updateWorkIndexFromState(){if(!currentWorkId)return;const item=workIndex.find(w=>w.id===currentWorkId),meta=workIndexMeta();if(item)Object.assign(item,meta);else workIndex.push(meta);saveWorkIndex();renderWorkSwitcher();}
+function renderWorkSwitcher(){const sel=$('workSelect');if(!sel)return;sel.innerHTML=workIndex.map(w=>`<option value="${w.id}">${esc(w.label||'Neue Klausur')}${w.date?` · ${formatDate(w.date)}`:''}</option>`).join('');if(currentWorkId)sel.value=currentWorkId;}
+function loadReminderState(){reminderState={changeCount:0,firstUnexportedAt:null};if(!currentWorkId)return;try{const raw=localStorage.getItem(reminderKey(currentWorkId));if(raw){const parsed=JSON.parse(raw);if(parsed&&typeof parsed==='object')reminderState={changeCount:Number(parsed.changeCount)||0,firstUnexportedAt:parsed.firstUnexportedAt||null};}}catch(e){}}
+
+function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2400);}
+function localDateIso(d=new Date()){const pad=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;}
+function feedbackDateValue(){return state.feedbackDateMode==='manual'&&/^\d{4}-\d{2}-\d{2}$/.test(state.feedbackDate||'')?state.feedbackDate:localDateIso();}
+function feedbackDateText(){const v=feedbackDateValue(),m=v.match(/^(\d{4})-(\d{2})-(\d{2})$/);return m?`${m[3]}.${m[2]}.${m[1]}`:v;}
+function renderFeedbackDateControl(){if(!$('feedbackDateMode'))return;$('feedbackDateMode').value=state.feedbackDateMode==='manual'?'manual':'auto';$('feedbackDateInput').disabled=state.feedbackDateMode!=='manual';$('feedbackDateInput').value=state.feedbackDateMode==='manual'?(state.feedbackDate||localDateIso()):localDateIso();$('feedbackDatePreview').textContent=`korrigiert am ${feedbackDateText()}`;}
+function getMax(){return roundHalf(state.tasks.reduce((a,t)=>a+(Number(t.max)||0),0));}
+function getStudent(id){return state.students.find(s=>s.id===id);}
+function ensureScores(){state.students.forEach(s=>{if(!s.scores)s.scores={};state.tasks.forEach(t=>{if(!(t.id in s.scores))s.scores[t.id]=null;});});}
+function validScore(v,max){return v===null||v===''||v===undefined||(Number(v)>=0&&Number(v)<=Number(max)&&Math.abs(Number(v)*2-Math.round(Number(v)*2))<1e-8);}
+function scoreInfo(s){if(!s||s.absent)return{complete:false,entered:0,total:null,filled:0,invalid:false};let entered=0,filled=0,invalid=false;state.tasks.forEach(t=>{const v=s.scores?.[t.id];if(v===null||v===''||v===undefined)return;const num=Number(v);if(!Number.isFinite(num)||!validScore(num,t.max)){invalid=true;return;}entered+=num;filled++;});const complete=state.tasks.length>0&&filled===state.tasks.length&&!invalid;return{complete,entered:roundHalf(entered),total:complete?roundHalf(entered):null,filled,invalid};}
+function isComplete(s){return scoreInfo(s).complete;}
+function aidLabel(mode){return mode==='no'?'ohne Hilfsmittel':'mit Hilfsmitteln';}
+function aidTasks(mode){return state.tasks.filter(t=>t.aidMode===mode);}
+function taskGroupKey(label){const m=String(label??'').trim().match(/^(\d+)/);return m?m[1]:String(label??'').trim();}
+function aidInfo(s,mode){const tasks=aidTasks(mode),max=roundHalf(tasks.reduce((a,t)=>a+(Number(t.max)||0),0));if(!s||s.absent||!tasks.length)return{max,entered:0,filled:0,complete:false,total:null,pct:null};let entered=0,filled=0,invalid=false;tasks.forEach(t=>{const v=s.scores?.[t.id];if(v===null||v===''||v===undefined)return;const num=Number(v);if(!Number.isFinite(num)||!validScore(num,t.max)){invalid=true;return;}entered+=num;filled++;});const complete=filled===tasks.length&&!invalid,total=complete?roundHalf(entered):null;return{max,entered:roundHalf(entered),filled,complete,total,pct:complete&&max?total/max*100:null};}
+function pctText(v,digits=1){return Number.isFinite(v)?`${v.toLocaleString('de-DE',{maximumFractionDigits:digits})} %`:'–';}
+function percentForScore(score){const max=getMax();return max?Number(score)/max*100:null;}
+function finalPercentForScore(score){const p=percentForScore(score);return p===null||!Number.isFinite(p)?null:Math.round(p);}
+function notePointsFor(score){const p=finalPercentForScore(score);if(p===null)return null;for(let np=15;np>=1;np--){if(p>=Number(state.gradeThresholds[np]))return np;}return 0;}
+function gradeGroupFromNP(np){if(np===null||np===undefined)return null;if(np>=13)return 1;if(np>=10)return 2;if(np>=7)return 3;if(np>=4)return 4;if(np>=1)return 5;return 6;}
+function stats(){const attended=state.students.filter(s=>!s.absent),active=attended.filter(isComplete),pending=attended.filter(s=>!isComplete(s));const vals=active.map(s=>scoreInfo(s).total).sort((a,b)=>a-b);const n=vals.length,avg=n?vals.reduce((a,b)=>a+b,0)/n:null;let med=null;if(n)med=n%2?vals[(n-1)/2]:(vals[n/2-1]+vals[n/2])/2;const npDist=Array(16).fill(0),gradeDist={1:0,2:0,3:0,4:0,5:0,6:0};let npSum=0;active.forEach(s=>{const np=notePointsFor(scoreInfo(s).total);npDist[np]++;gradeDist[gradeGroupFromNP(np)]++;npSum+=np;});return{attended,active,pending,vals,n,avg,med,avgPct:avg===null?null:percentForScore(avg),avgNP:n?npSum/n:null,npDist,gradeDist};}
+function taskStats(){const active=stats().active;return state.tasks.map(t=>{const vals=active.map(s=>Number(s.scores[t.id])).filter(Number.isFinite);const avg=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:null;return{...t,avg,pct:avg===null||!t.max?null:avg/Number(t.max)*100};});}
+function afbStats(){const active=stats().active;return ['I','II','III'].map(afb=>{const tasks=state.tasks.filter(t=>t.afb===afb);const max=tasks.reduce((a,t)=>a+Number(t.max||0),0);if(!tasks.length)return{afb,max:0,avg:null,pct:null};const totals=active.map(s=>tasks.reduce((a,t)=>a+Number(s.scores[t.id]||0),0));const avg=totals.length?totals.reduce((a,b)=>a+b,0)/totals.length:null;return{afb,max,avg,pct:avg===null||!max?null:avg/max*100};});}
+function aidClassSummary(mode){const st=stats(),tasks=aidTasks(mode),max=roundHalf(tasks.reduce((a,t)=>a+(Number(t.max)||0),0));if(!tasks.length||!st.active.length)return{mode,max,n:st.active.length,avg:null,pct:null};const vals=st.active.map(s=>aidInfo(s,mode).total).filter(Number.isFinite),avg=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:null;return{mode,max,n:vals.length,avg,pct:Number.isFinite(avg)&&max?avg/max*100:null};}
+function saveReminderState(){if(!currentWorkId)return;try{localStorage.setItem(reminderKey(currentWorkId),JSON.stringify(reminderState));}catch(e){}}
+function persistLocalState(label='lokaler Arbeitsstand aktuell'){if(!currentWorkId)return;try{localStorage.setItem(workKey(currentWorkId),JSON.stringify(state));updateWorkIndexFromState();$('autosaveBadge').textContent=label;}catch(e){$('autosaveBadge').textContent='lokales Speichern fehlgeschlagen';}}
+function switchToWork(id){if(!id||id===currentWorkId)return;persistLocalState();currentWorkId=id;localStorage.setItem(CURRENT_WORK_KEY,currentWorkId);let loaded=null;try{loaded=JSON.parse(localStorage.getItem(workKey(currentWorkId))||'null');}catch(e){}state=normalizeState(loaded||blankState());loadReminderState();ensureScores();renderAll(false);renderWorkSwitcher();$('autosaveBadge').textContent='lokale Klausur gewechselt';updateStorageStatusUI();}
+function registerNewWork(newState,reminder={changeCount:0,firstUnexportedAt:null},options={}){persistLocalState();const oldId=currentWorkId;currentWorkId=uid();state=normalizeState(newState);reminderState=reminder;const meta=workIndexMeta(currentWorkId,state);if(options.afterCurrent&&oldId){const i=workIndex.findIndex(w=>w.id===oldId);if(i>=0)workIndex.splice(i+1,0,meta);else workIndex.push(meta);}else workIndex.push(meta);saveWorkIndex();localStorage.setItem(CURRENT_WORK_KEY,currentWorkId);localStorage.setItem(workKey(currentWorkId),JSON.stringify(state));saveReminderState();ensureScores();renderAll(false);renderWorkSwitcher();$('autosaveBadge').textContent='neue lokale Klausur angelegt';updateStorageStatusUI();}
+function isBlankLocalWork(s=state){return !(s?.students?.length||s?.tasks?.length||s?.meta?.className||s?.meta?.courseType||s?.meta?.semester||s?.meta?.title||s?.relation);}
+function deleteCurrentWork(){if(!currentWorkId)return;const label=workDisplayName(state),unexported=!!state.updatedAt&&(!state.exportedAt||Date.parse(state.updatedAt)>Date.parse(state.exportedAt)),extra=unexported?'\n\nAchtung: Diese Klausur enthält Änderungen, die noch nicht als Checkpoint exportiert wurden.':'';if(!confirm(`Lokale Klausur „${label}“ wirklich löschen?${extra}\n\nExportierte .oka-Checkpoints werden dadurch nicht gelöscht.`))return;const oldIndex=workIndex.findIndex(w=>w.id===currentWorkId);localStorage.removeItem(workKey(currentWorkId));localStorage.removeItem(reminderKey(currentWorkId));workIndex=workIndex.filter(w=>w.id!==currentWorkId);saveWorkIndex();if(workIndex.length){const next=workIndex[Math.min(Math.max(oldIndex,0),workIndex.length-1)];currentWorkId=next.id;localStorage.setItem(CURRENT_WORK_KEY,currentWorkId);let loaded=null;try{loaded=JSON.parse(localStorage.getItem(workKey(currentWorkId))||'null');}catch(e){}state=normalizeState(loaded||blankState());loadReminderState();}else{currentWorkId=uid();state=blankState();reminderState={changeCount:0,firstUnexportedAt:null};workIndex=[workIndexMeta(currentWorkId,state)];saveWorkIndex();localStorage.setItem(CURRENT_WORK_KEY,currentWorkId);localStorage.setItem(workKey(currentWorkId),JSON.stringify(state));saveReminderState();}ensureScores();renderAll(false);renderWorkSwitcher();updateStorageStatusUI();$('autosaveBadge').textContent='lokale Klausur gelöscht';}
+function exportStatusText(){if(!state.exportedAt)return'Exportzeitpunkt unbekannt';const u=state.updatedAt?Date.parse(state.updatedAt):0,e=Date.parse(state.exportedAt);return e>=u?'Alle Änderungen exportiert':'Änderungen noch nicht exportiert';}
+function formatTimestamp(v){if(!v)return'–';const d=new Date(v);if(Number.isNaN(d.getTime()))return'–';return d.toLocaleString('de-DE',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'});}
+function updateStorageStatusUI(){const status=exportStatusText();if($('updatedAtDisplay'))$('updatedAtDisplay').textContent=formatTimestamp(state.updatedAt);if($('exportedAtDisplay'))$('exportedAtDisplay').textContent=state.exportedAt?formatTimestamp(state.exportedAt):'unbekannt';if($('exportStateDisplay'))$('exportStateDisplay').textContent=status;const badge=$('exportStatusBadge');if(badge){const shortStatus=status==='Alle Änderungen exportiert'?'Exportiert':status==='Änderungen noch nicht exportiert'?'Nicht exportiert':'Export ?';const full=badge.querySelector('.status-full'),short=badge.querySelector('.status-short');if(full)full.textContent=status;if(short)short.textContent=shortStatus;badge.title=status;badge.classList.remove('status-ok','status-warn','status-neutral');badge.classList.add(status==='Alle Änderungen exportiert'?'status-ok':status==='Änderungen noch nicht exportiert'?'status-warn':'status-neutral');}updateExportReminderUI();}
+function updateExportReminderUI(){const el=$('exportReminder');if(!el)return;const first=reminderState.firstUnexportedAt?Date.parse(reminderState.firstUnexportedAt):NaN;const oldEnough=Number.isFinite(first)&&(Date.now()-first)>=15*60*1000;const show=reminderState.changeCount>=5&&oldEnough&&(!state.exportedAt||!state.updatedAt||Date.parse(state.updatedAt)>Date.parse(state.exportedAt));el.classList.toggle('hidden',!show);if(show&&$('exportReminderText')){const mins=Math.max(15,Math.floor((Date.now()-first)/60000));$('exportReminderText').textContent=`${reminderState.changeCount} Änderungen seit dem letzten Checkpoint · erste davon vor ${mins} Min. Der browserlokale Stand ist bereits gesichert.`;}}
+function markDirty(){const now=new Date().toISOString();state.updatedAt=now;reminderState.changeCount=(Number(reminderState.changeCount)||0)+1;if(!reminderState.firstUnexportedAt)reminderState.firstUnexportedAt=now;saveReminderState();$('autosaveBadge').textContent='lokaler Arbeitsstand wird aktualisiert…';updateStorageStatusUI();clearTimeout(autosaveTimer);autosaveTimer=setTimeout(()=>persistLocalState(),220);}
+function syncMetaFromInputs(){state.meta.subject=$('subjectName').value.trim();state.meta.className=$('className').value.trim();state.meta.courseType=$('courseType').value;state.meta.semester=$('semester').value.trim();state.meta.title=$('examTitle').value.trim();state.meta.date=$('examDate').value;renderAll(false);markDirty();}
+function renderRelationNotice(){const el=$('relationNotice');if(!el)return;const r=state.relation;if(!r||r.type!=='makeup'){el.style.display='none';el.textContent='';return;}const title=(r.parentTitle||'').trim(),date=(r.parentDate||'').trim();const bits=[];if(title)bits.push(title);if(date)bits.push(formatDate(date));el.innerHTML=`<strong>Nachschreibeklausur zu:</strong> ${esc(bits.join(' · ')||'Ursprungsklausur')}`;el.style.display='block';}
+function renderMetaInputs(){$('subjectName').value=state.meta.subject||'';$('className').value=state.meta.className||'';$('courseType').value=state.meta.courseType||'';$('semester').value=state.meta.semester||'';$('examTitle').value=state.meta.title||'';$('examDate').value=state.meta.date||'';renderRelationNotice();}
+function renderStudents(){const makeup=state.students.filter(s=>s.absent),active=state.students.filter(s=>!s.absent);$('studentTableBody').innerHTML=state.students.map(s=>`<tr class="${s.absent?'absent':''}"><td><input data-student-last="${s.id}" value="${esc(s.last)}"></td><td><input data-student-first="${s.id}" value="${esc(s.first)}"></td><td style="text-align:center"><input type="checkbox" data-student-absent="${s.id}" ${s.absent?'checked':''}></td><td class="num"><button class="small danger" data-del-student="${s.id}">löschen</button></td></tr>`).join('')||'<tr><td colspan="4" class="muted">Noch keine Schüler.</td></tr>';$('makeupList').innerHTML=makeup.length?makeup.map(s=>`<strong>${esc(s.last)}, ${esc(s.first)}</strong>`).join(' · '):'<span class="muted">keine</span>';const makeupBtn=$('createMakeupProjectBtn');if(makeupBtn){makeupBtn.disabled=!makeup.length;makeupBtn.textContent=makeup.length?`Nachschreibeklausur anlegen (${makeup.length})`:'Nachschreibeklausur anlegen';}if(!state.selectedStudentId||!active.some(s=>s.id===state.selectedStudentId))state.selectedStudentId=active[0]?.id||null;if(!state.feedbackStudentId||!active.some(s=>s.id===state.feedbackStudentId))state.feedbackStudentId=active.find(isComplete)?.id||active[0]?.id||null;$('studentSelect').innerHTML=active.length?active.map(s=>`<option value="${s.id}">${esc(s.last)}, ${esc(s.first)}</option>`).join(''):'<option value="">Keine mitschreibenden Schüler</option>';if(state.selectedStudentId)$('studentSelect').value=state.selectedStudentId;}
+function renderTasks(){$('taskList').innerHTML=state.tasks.map((t,i)=>`<div class="task-row"><div class="move"><button class="small" data-task-up="${t.id}" ${i===0?'disabled':''}>↑</button><button class="small" data-task-down="${t.id}" ${i===state.tasks.length-1?'disabled':''}>↓</button></div><input data-task-label="${t.id}" value="${esc(t.label)}"><input data-task-max="${t.id}" type="number" min="0.5" step="0.5" value="${t.max}"><select data-task-afb="${t.id}"><option value="" ${!t.afb?'selected':''}>AFB –</option><option value="I" ${t.afb==='I'?'selected':''}>AFB I</option><option value="II" ${t.afb==='II'?'selected':''}>AFB II</option><option value="III" ${t.afb==='III'?'selected':''}>AFB III</option></select><label class="task-aid-check"><input type="checkbox" data-task-aid="${t.id}" ${t.aidMode==='no'?'checked':''}><span>ohne Hilfsmittel</span></label><button class="small danger" data-del-task="${t.id}">löschen</button></div>`).join('')||'<div class="muted">Noch keine Aufgaben.</div>';$('maxTotal').textContent=fmt(getMax());}
+function renderEntry(){renderStudents();const s=getStudent(state.selectedStudentId);$('scoreGrid').innerHTML='';if(!s||s.absent){$('scoreGrid').innerHTML='<div class="muted">Bitte zuerst mindestens einen mitschreibenden Schüler anlegen.</div>';$('studentTotal').textContent='–';$('studentMax').textContent=fmt(getMax());$('studentGrade').textContent='–';$('studentNoAid').textContent='–';$('studentWithAid').textContent='–';$('studentNoAidSub').textContent='';$('studentWithAidSub').textContent='';return;}let lastGroup=null,groupIndex=-1;state.tasks.forEach((t,i)=>{const group=taskGroupKey(t.label),isStart=i===0||taskGroupKey(state.tasks[i-1].label)!==group;if(isStart){groupIndex++;lastGroup=group;}const box=document.createElement('div');box.className=`score-box ${groupIndex%2?'score-group-b':'score-group-a'}${isStart?' score-group-start':''}`;const v=s.scores[t.id];if(!validScore(v,t.max))box.classList.add('invalid');box.innerHTML=`<label><span>${esc(t.label)}${t.afb?` · AFB ${t.afb}`:''}</span><span>max. ${fmt(t.max)}</span></label><input type="number" min="0" max="${t.max}" step="0.5" data-score-task="${t.id}" value="${v===null||v===undefined?'':v}">`;$('scoreGrid').appendChild(box);});const info=scoreInfo(s);$('studentTotal').textContent=info.filled?fmt(info.entered):'–';$('studentMax').textContent=fmt(getMax());$('studentGrade').textContent=info.complete?notePointsFor(info.total):'unvollständig';const no=aidInfo(s,'no'),yes=aidInfo(s,'yes');$('studentNoAid').textContent=no.max?(no.complete?`${fmt(no.total)} / ${fmt(no.max)} P.`:`${fmt(no.entered)} / ${fmt(no.max)} P.`):'–';$('studentNoAidSub').textContent=no.max?(no.complete?pctText(no.pct):`${no.filled}/${aidTasks('no').length} Teilaufgaben erfasst`):'keine Aufgaben zugeordnet';$('studentWithAid').textContent=yes.max?(yes.complete?`${fmt(yes.total)} / ${fmt(yes.max)} P.`:`${fmt(yes.entered)} / ${fmt(yes.max)} P.`):'–';$('studentWithAidSub').textContent=yes.max?(yes.complete?pctText(yes.pct):`${yes.filled}/${aidTasks('yes').length} Teilaufgaben erfasst`):'keine Aufgaben zugeordnet';}
+function focusFirstScoreInput(){requestAnimationFrame(()=>{const first=$('scoreGrid')?.querySelector('input[data-score-task]');if(first){first.focus();if(typeof first.select==='function')first.select();}});}
+function renderResultsTable(){
+ const parts=state.tasks.map(t=>taskParts(t.label));
+ const grouped=parts.every(Boolean);
+ const blockInfo=state.tasks.map((t,i)=>{
+   const major=grouped?parts[i].major:String(i+1);
+   const prevMajor=i>0?(grouped?parts[i-1].major:String(i)):null;
+   const groupStart=i>0&&major!==prevMajor;
+   let blockIndex=0;
+   if(grouped){for(let j=1;j<=i;j++)if(parts[j].major!==parts[j-1].major)blockIndex++;}
+   else blockIndex=i;
+   return {groupStart,alt:blockIndex%2===1};
+ });
+ const taskClass=i=>['num','task-col',blockInfo[i]?.groupStart?'task-group-start':'',blockInfo[i]?.alt?'task-block-alt':''].filter(Boolean).join(' ');
+ const cols=state.tasks.map((t,i)=>`<th class="${taskClass(i)}">${esc(t.label)}<br><span class="muted">/${fmt(t.max)}</span></th>`).join('');
+ $('resultsHead').innerHTML=`<tr><th class="sticky-name">Name</th><th class="status-col" title="Status">St.</th>${cols}<th class="num summary-col summary-start summary-total">Σ</th><th class="num summary-col summary-percent">%</th><th class="summary-col np-col">NP</th></tr>`;
+ const colspan=state.tasks.length+5;
+ $('resultsBody').innerHTML=state.students.map(s=>{
+   const info=scoreInfo(s),status=s.absent?'NS':(info.complete?'–':'offen'),statusTitle=s.absent?'Nachschreiber':(info.complete?'vollständig':'unvollständig'),tot=info.total;
+   const rowClasses=[s.absent?'absent':'',(!s.absent&&s.id===state.selectedStudentId)?'current-row':''].filter(Boolean).join(' ');
+   const taskCells=state.tasks.map((t,i)=>{const v=s.scores[t.id],empty=v===null||v===undefined||v==='';const bad=!s.absent&&!empty&&!validScore(v,t.max);return`<td class="${taskClass(i)}${bad?' invalid-score':''}">${s.absent?'–':(empty?'':fmt(v))}</td>`;}).join('');
+   return`<tr class="${rowClasses}" ${s.absent?'':`data-select-student="${s.id}"`}><td class="student-name sticky-name" title="${esc(s.last)}, ${esc(s.first)}">${esc(s.last)}, ${esc(s.first)}</td><td class="status-col" title="${statusTitle}">${status}</td>${taskCells}<td class="num summary-col summary-start summary-total"><strong>${s.absent||!info.complete?'–':fmt(tot)}</strong></td><td class="num summary-col summary-percent">${s.absent||!info.complete?'–':pct(finalPercentForScore(tot))}</td><td class="summary-col np-col"><strong>${s.absent||!info.complete?'–':notePointsFor(tot)}</strong></td></tr>`;
+ }).join('')||`<tr><td colspan="${colspan}" class="muted">Keine Daten.</td></tr>`;
+}
+function analysisMetricHtml(k,v){return `<div class="metric"><div class="k">${k}</div><div class="v">${v}</div></div>`;}
+function heatHue(pctv){const p=Math.max(0,Math.min(100,Number(pctv)||0));return Math.round(p*1.2);}
+function heatColor(pctv){return `hsl(${heatHue(pctv)} 68% 42%)`;}
+function heatSoftColor(pctv){return `hsl(${heatHue(pctv)} 72% 91%)`;}
+function heatBarHtml(pctv){if(!Number.isFinite(pctv))return '<span class="muted">–</span>';const p=Math.max(0,Math.min(100,pctv));return `<div class="analysis-pct-wrap"><div class="analysis-heat-track"><div class="analysis-heat-fill" style="width:${p}%;background:${heatColor(p)}"></div></div><strong>${pctText(p)}</strong></div>`;}
+function heatCellStyle(pctv){if(!Number.isFinite(pctv))return '';const p=Math.max(0,Math.min(100,pctv));return `background:linear-gradient(90deg,${heatSoftColor(p)} 0 ${p}%,transparent ${p}% 100%)`;}
+function deltaText(delta){if(!Number.isFinite(delta))return '–';const sign=delta>0?'+':'';return `${sign}${delta.toLocaleString('de-DE',{maximumFractionDigits:1})} PP`;}
+function aidCardHtml(title,a){return `<div class="analysis-aid-card"><h3>${title}</h3><div class="big">${pctText(a.pct)}</div>${Number.isFinite(a.pct)?`<div class="analysis-heat-track"><div class="analysis-heat-fill" style="width:${Math.max(0,Math.min(100,a.pct))}%;background:${heatColor(a.pct)}"></div></div>`:''}<div class="smallline">${Number.isFinite(a.avg)?`${fmt(a.avg)} von ${fmt(a.max)} P. im Durchschnitt`:(a.max?'Noch keine vollständig ausgewerteten Arbeiten':'Keine Aufgaben zugeordnet')}</div></div>`;}
+function afbCardsHtml(){const rows=afbStats().filter(a=>a.max>0);return rows.length?rows.map(a=>`<div class="analysis-afb-card"><div class="k">AFB ${a.afb}</div><div class="v">${pctText(a.pct)}</div><div class="sub">Ø ${fmt(a.avg)} von ${fmt(a.max)} P.</div></div>`).join(''):'<div class="muted">Noch keine AFB-Zuordnung.</div>';}
+function renderAnalysis(){const st=stats(),max=getMax(),tasks=taskStats(),no=aidClassSummary('no'),yes=aidClassSummary('yes'),afb=afbStats().filter(a=>a.max>0),notices=[];if(!state.tasks.length)notices.push('Noch keine Aufgaben vorhanden.');if(st.pending.length)notices.push(`${st.pending.length} mitschreibende Arbeit${st.pending.length===1?' ist':'en sind'} noch unvollständig und wird in der Auswertung nicht berücksichtigt.`);$('analysisNotice').style.display=notices.length?'block':'none';$('analysisNotice').textContent=notices.join(' ');const metrics=[['ausgewertet',st.n],['Ø Punkte',st.avg===null?'–':`${fmt(st.avg)} / ${fmt(max)}`],['Ø in %',pctText(st.avgPct)],['Median',st.med===null?'–':`${fmt(st.med)} P.`],['Ø Notenpunkte',st.avgNP===null?'–':st.avgNP.toLocaleString('de-DE',{maximumFractionDigits:2})]],metricHtml=metrics.map(([k,v])=>analysisMetricHtml(k,v)).join('');$('analysisTeacherMetrics').innerHTML=metricHtml;$('analysisClassMetrics').innerHTML=metricHtml;const classDelta=Number.isFinite(no.pct)&&Number.isFinite(yes.pct)?yes.pct-no.pct:null,classDeltaSentence=!Number.isFinite(classDelta)?'':Math.abs(classDelta)<0.05?'Beide Teile liegen praktisch gleichauf.':`Mit Hilfsmitteln liegt der Kurs um ${Math.abs(classDelta).toLocaleString('de-DE',{maximumFractionDigits:1})} Prozentpunkte ${classDelta>0?'höher':'niedriger'} als ohne Hilfsmittel.`,classDeltaHtml=Number.isFinite(classDelta)?`<div class="analysis-delta-note${Math.abs(classDelta)>=15?' attention':''}"><strong>Vergleich der Teile:</strong> ${classDeltaSentence}${Math.abs(classDelta)>=15?' Auffällige Abweichung zwischen den beiden Teilen.':''}</div>`:'';$('analysisTeacherAid').innerHTML=aidCardHtml('ohne Hilfsmittel',no)+aidCardHtml('mit Hilfsmitteln',yes)+`<div style="grid-column:1/-1">${classDeltaHtml}</div>`;$('analysisClassAid').innerHTML=aidCardHtml('ohne Hilfsmittel',no)+aidCardHtml('mit Hilfsmitteln',yes);$('analysisTeacherAfb').innerHTML=afbCardsHtml();$('analysisClassAfb').innerHTML=afbCardsHtml();$('analysisStudentBody').innerHTML=st.active.map(student=>{const info=scoreInfo(student),noS=aidInfo(student,'no'),yesS=aidInfo(student,'yes'),overall=finalPercentForScore(info.total),delta=noS.complete&&yesS.complete?yesS.pct-noS.pct:null;return `<tr><td class="student-name">${esc(student.last)}, ${esc(student.first)}</td><td class="num">${fmt(info.total)} / ${fmt(max)}</td><td class="heat-cell" style="${heatCellStyle(overall)}">${pctText(overall)}</td><td class="num"><strong>${notePointsFor(info.total)}</strong></td><td class="num">${noS.complete?`${fmt(noS.total)} / ${fmt(noS.max)}`:'–'}</td><td class="heat-cell" style="${heatCellStyle(noS.pct)}">${noS.complete?pctText(noS.pct):'–'}</td><td class="num">${yesS.complete?`${fmt(yesS.total)} / ${fmt(yesS.max)}`:'–'}</td><td class="heat-cell" style="${heatCellStyle(yesS.pct)}">${yesS.complete?pctText(yesS.pct):'–'}</td><td class="num delta-cell${Number.isFinite(delta)&&Math.abs(delta)>=20?' attention':''}">${deltaText(delta)}</td></tr>`;}).join('')||'<tr><td colspan="9" class="muted">Noch keine vollständig ausgewerteten Arbeiten.</td></tr>';$('analysisTaskBody').innerHTML=tasks.map(t=>`<tr><td><strong>${esc(t.label)}</strong></td><td>${t.afb?`AFB ${t.afb}`:'–'}</td><td>${aidLabel(t.aidMode)}</td><td class="num">${fmt(t.max)}</td><td class="num">${Number.isFinite(t.avg)?fmt(t.avg):'–'}</td><td>${heatBarHtml(t.pct)}</td></tr>`).join('')||'<tr><td colspan="6" class="muted">Noch keine Aufgaben.</td></tr>';$('analysisAfbBody').innerHTML=afb.length?afb.map(a=>`<tr><td>AFB ${a.afb}</td><td class="num">${fmt(a.max)}</td><td class="num">${fmt(a.avg)}</td><td>${heatBarHtml(a.pct)}</td></tr>`).join(''):'<tr><td colspan="4" class="muted">Noch keine AFB-Zuordnung.</td></tr>';$('analysisClassTitle').textContent=[state.meta.subject,state.meta.className,state.meta.courseType,state.meta.title].filter(Boolean).join(' · ')||'Auswertung der Klausur';$('analysisClassSubtitle').textContent=[state.meta.semester,formatDate(state.meta.date),`${st.n} ausgewertete Arbeiten`].filter(Boolean).join(' · ');$('analysisNpBars').innerHTML=Array.from({length:16},(_,i)=>15-i).map(np=>{const n=st.npDist[np]||0,p=st.n?n/st.n*100:0;return `<div class="analysis-grade-row"><strong>${np} NP</strong><div class="analysis-grade-track"><div class="analysis-grade-fill" style="width:${Math.max(0,Math.min(100,p))}%"></div></div><span>${n}</span></div>`;}).join('');$('analysisTaskBars').innerHTML=tasks.map(t=>`<div class="analysis-bar-row"><div class="analysis-bar-label"><strong>${esc(t.label)}</strong><br><span class="tiny muted">${t.afb?`AFB ${t.afb} · `:''}${aidLabel(t.aidMode)}</span></div><div class="analysis-track"><div class="analysis-fill" style="width:${Number.isFinite(t.pct)?Math.max(0,Math.min(100,t.pct)):0}%;background:${Number.isFinite(t.pct)?heatColor(t.pct):'var(--accent)'}"></div></div><div class="analysis-bar-value">${pctText(t.pct,0)}</div></div>`).join('')||'<div class="muted">Noch keine Aufgaben.</div>';renderPercentDistribution(st);}
+function renderPercentDistribution(st=stats()){
+ const el=$('analysisPercentPlot');if(!el)return;
+ const active=st.active||[];
+ let html='<div class="analysis-percent-axis"></div>';
+ for(let p=0;p<=100;p+=10){const x=2+96*p/100;html+=`<div class="analysis-percent-tick" style="left:${x}%">${p}%</div>`;}
+ for(let np=15;np>=1;np--){const p=Math.max(0,Math.min(100,Number(state.gradeThresholds[np])||0)),x=2+96*p/100,top=np%2?4:20;html+=`<div class="analysis-percent-boundary" style="left:${x}%"><span style="top:${top}px">${np}</span></div>`;}
+ const stacks={};
+ active.forEach(s=>{const info=scoreInfo(s);if(!info.complete)return;const p=finalPercentForScore(info.total),key=p;const level=stacks[key]||0;stacks[key]=level+1;const x=2+96*Math.max(0,Math.min(100,p))/100,bottom=45+Math.min(level,8)*15;html+=`<div class="analysis-percent-dot" style="left:${x}%;bottom:${bottom}px" title="${esc(s.last)}, ${esc(s.first)}: ${pctText(p)} · ${notePointsFor(info.total)} NP"></div>`;});
+ if(!active.length)html+='<div class="muted" style="position:absolute;left:1rem;top:1rem">Noch keine vollständig ausgewerteten Klausuren.</div>';
+ el.innerHTML=html;
+}
+function setAnalysisMode(mode){const teacher=mode!=='class';$('analysisTeacherView').style.display=teacher?'block':'none';$('analysisClassView').style.display=teacher?'none':'block';document.querySelectorAll('[data-analysis-mode]').forEach(b=>b.classList.toggle('active',(teacher&&b.dataset.analysisMode==='teacher')||(!teacher&&b.dataset.analysisMode==='class')));}
+function anonymizedAnalysisExport(){const st=stats(),no=aidClassSummary('no'),yes=aidClassSummary('yes');return{format:'oberstufe-analysis',version:1,generatedAt:new Date().toISOString(),meta:{subject:state.meta.subject||'',className:state.meta.className||'',courseType:state.meta.courseType||'',semester:state.meta.semester||'',title:state.meta.title||'',date:state.meta.date||''},evaluatedCount:st.n,maxPoints:getMax(),grading:{thresholds:{...state.gradeThresholds}},overall:{averagePoints:st.avg,medianPoints:st.med,averagePercent:st.avgPct,averageNotePoints:st.avgNP,notePointDistribution:st.npDist,gradeDistribution:st.gradeDist},aids:{noAid:{maxPoints:no.max,averagePoints:no.avg,averagePercent:no.pct},withAid:{maxPoints:yes.max,averagePoints:yes.avg,averagePercent:yes.pct}},afb:afbStats().filter(a=>a.max>0).map(a=>({afb:a.afb,maxPoints:a.max,averagePoints:a.avg,averagePercent:a.pct})),tasks:taskStats().map(t=>({label:t.label,maxPoints:t.max,afb:t.afb||'',aidMode:t.aidMode,aidLabel:aidLabel(t.aidMode),averagePoints:t.avg,averagePercent:t.pct}))};}
+async function exportAnalysisJson(){const d=new Date();await shareOrDownload(timestampedExportName('_Auswertung','.json',d),new Blob([JSON.stringify(anonymizedAnalysisExport(),null,2)],{type:'application/json'}));}
+function analysisCsv(){const d=anonymizedAnalysisExport(),rows=[];rows.push(['Auswertung',d.meta.subject,d.meta.className,d.meta.courseType,d.meta.semester,d.meta.title,d.meta.date]);rows.push(['Ausgewertete Arbeiten',d.evaluatedCount]);rows.push(['Gesamtpunkte',d.maxPoints]);rows.push(['Ø Punkte',d.overall.averagePoints??'']);rows.push(['Median',d.overall.medianPoints??'']);rows.push(['Ø %',Number.isFinite(d.overall.averagePercent)?d.overall.averagePercent.toFixed(1).replace('.',','):'']);rows.push(['Ø Notenpunkte',Number.isFinite(d.overall.averageNotePoints)?d.overall.averageNotePoints.toFixed(2).replace('.',','):'']);rows.push([]);rows.push(['Bereich','Max. Punkte','Ø Punkte','Ø %']);rows.push(['ohne Hilfsmittel',d.aids.noAid.maxPoints,d.aids.noAid.averagePoints??'',Number.isFinite(d.aids.noAid.averagePercent)?d.aids.noAid.averagePercent.toFixed(1).replace('.',','):'']);rows.push(['mit Hilfsmitteln',d.aids.withAid.maxPoints,d.aids.withAid.averagePoints??'',Number.isFinite(d.aids.withAid.averagePercent)?d.aids.withAid.averagePercent.toFixed(1).replace('.',','):'']);rows.push([]);rows.push(['AFB','Max. Punkte','Ø Punkte','Ø %']);d.afb.forEach(a=>rows.push([`AFB ${a.afb}`,a.maxPoints,a.averagePoints??'',Number.isFinite(a.averagePercent)?a.averagePercent.toFixed(1).replace('.',','):'']));rows.push([]);rows.push(['Aufgabe','AFB','Bereich','Rohpunkte','Ø Punkte','Ø %']);d.tasks.forEach(t=>rows.push([t.label,t.afb?`AFB ${t.afb}`:'',t.aidLabel,t.maxPoints,t.averagePoints??'',Number.isFinite(t.averagePercent)?t.averagePercent.toFixed(1).replace('.',','):'']));const q=v=>{const x=String(v??'');return/[;"\n]/.test(x)?'"'+x.replace(/"/g,'""')+'"':x;};return'\ufeff'+rows.map(r=>r.map(q).join(';')).join('\r\n');}
+async function exportAnalysisCsv(){const d=new Date();await shareOrDownload(timestampedExportName('_Auswertung','.csv',d),new Blob([analysisCsv()],{type:'text/csv;charset=utf-8'}));}
+async function printAnalysis(){renderAnalysis();setAnalysisMode('class');preparePrintTitle('Klassenansicht');setPrintMode('print-analysis');await nextPaint();window.print();}
+function renderGradeKey(){$('gradeKeyGrid').innerHTML=Array.from({length:15},(_,i)=>15-i).map(np=>`<div class="field"><label>${np} NP ab</label><div class="row" style="gap:.25rem"><input data-grade-threshold="${np}" type="number" min="0" max="100" step="0.5" value="${state.gradeThresholds[np]}"><span class="tiny muted">%</span></div></div>`).join('');}
+function taskParts(label){const m=String(label??'').trim().match(/^(\d+)\s*(.*)$/);return m?{major:m[1],sub:m[2].trim()}:null;}
+function estimatedCorrectionFont(){const n=state.tasks.length;if(!n)return 8.6;const avgLen=state.tasks.reduce((a,t)=>a+String(t.label).length,0)/n;return 8.8-Math.max(0,n-18)*.14-Math.max(0,avgLen-6)*.06;}
+function correctionPageHtml(students,pageIndex,pageCount,makeup){const hasMakeup=pageIndex===0&&makeup.length>0,availableHeight=hasMakeup?147:155,rowHeight=Math.min(10,Math.max(5.2,availableHeight/Math.max(students.length,1)));const parts=state.tasks.map(t=>taskParts(t.label)),grouped=parts.every(Boolean),groupStarts=state.tasks.map((t,i)=>grouped&&i>0&&parts[i].major!==parts[i-1].major),cls=i=>groupStarts[i]?' class="group-start"':'';const taskHead=state.tasks.map((t,i)=>`<th${cls(i)}>${esc(t.label)}</th>`).join(''),maxHead=state.tasks.map((t,i)=>`<th${cls(i)}>${fmt(t.max)}</th>`).join(''),rows=students.map(s=>`<tr style="height:${rowHeight.toFixed(2)}mm"><td class="name-col">${esc(s.last)}, ${esc(s.first)}</td>${state.tasks.map((_,i)=>`<td${cls(i)}></td>`).join('')}</tr>`).join(''),meta=[state.meta.className,state.meta.title,formatDate(state.meta.date)].filter(Boolean).map(esc).join(' · '),makeupHtml=hasMakeup?`<div class="correction-makeup"><strong>Nachschreiber:</strong> ${makeup.map(s=>`${esc(s.last)}, ${esc(s.first)}`).join(' · ')}</div>`:'';return`<div class="correction-page"><div class="correction-head"><div class="correction-title">Korrekturbogen</div><div class="correction-meta">${meta}</div></div>${makeupHtml}<table class="correction-table"><thead><tr><th class="name-col">Schüler/in</th>${taskHead}</tr><tr><th class="name-col">Rohpunkte</th>${maxHead}</tr></thead><tbody>${rows}</tbody></table>${pageCount>1?`<div class="correction-page-number">Seite ${pageIndex+1} von ${pageCount}</div>`:''}</div>`;}
+function renderCorrection(){const students=state.students.filter(s=>!s.absent),makeup=state.students.filter(s=>s.absent),n=state.tasks.length,calcFont=estimatedCorrectionFont(),font=Math.max(6.5,Math.min(8.8,calcFont));document.documentElement.style.setProperty('--correction-font-size',font+'pt');const messages=[];if(!students.length)messages.push('Keine mitschreibenden Schüler.');if(!n)messages.push('Noch keine Aufgaben.');if(calcFont<6.5)messages.push(`Für ${n} Teilaufgaben wäre rechnerisch eine Schrift kleiner als 6,5 pt nötig. Die Vorschau bleibt bei 6,5 pt; bitte den Korrekturbogen vor dem Drucken auf abgeschnittene Aufgabenbezeichnungen prüfen.`);$('correctionNotice').style.display=messages.length?'block':'none';$('correctionNotice').textContent=messages.join(' ');if(!students.length||!n){$('correctionPages').innerHTML='<div class="card">Bitte zuerst Schüler und Aufgaben anlegen.</div>';return;}const pages=[];for(let i=0;i<students.length;i+=30)pages.push(students.slice(i,i+30));$('correctionPages').innerHTML=pages.map((p,i)=>correctionPageHtml(p,i,pages.length,makeup)).join('');}
+function renderSignature(){$('signaturePreview').src=signatureData||'';$('signaturePreview').style.display=signatureData?'block':'none';}
+function feedbackModel(s){const info=scoreInfo(s),np=info.complete?notePointsFor(info.total):null,st=stats();return{student:s,info,np,grade:gradeGroupFromNP(np),max:getMax(),percent:info.complete?finalPercentForScore(info.total):null,gradeDist:st.gradeDist,npDist:st.npDist,tasks:state.tasks,meta:state.meta};}
+function fitText(ctx,text,maxWidth,start,min=16){let size=start;while(size>min){ctx.font=`${size}px Arial`;if(ctx.measureText(text).width<=maxWidth)break;size-=1;}return size;}
+function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.roundRect?ctx.roundRect(x,y,w,h,r):(ctx.rect(x,y,w,h));ctx.stroke();}
+function feedbackLayoutAssessment(){
+ const n=state.tasks.length;if(!n)return{ok:true,message:''};
+ const W=1900,left=55,right=W-55,taskLabelW=178,cellW=(right-left-taskLabelW)/Math.max(1,n),FONT='"Avenir Next", Avenir, "Helvetica Neue", Arial, sans-serif',taskFont=Math.max(15,Math.min(23,cellW*.26));
+ const canvas=document.createElement('canvas'),c=canvas.getContext('2d');c.font=`600 ${taskFont}px ${FONT}`;
+ let worst=null;
+ state.tasks.forEach(t=>{const candidates=[String(t.label),fmt(t.max)];for(const value of candidates){const width=c.measureText(value).width;if(!worst||width>worst.width)worst={label:String(t.label),value,width};}});
+ const usable=Math.max(0,cellW-8),tooNarrow=cellW<30,overflow=worst&&worst.width>usable;
+ if(!tooNarrow&&!overflow)return{ok:true,message:'',cellW,taskFont};
+ const detail=overflow&&worst?` Besonders eng ist „${worst.label}“.`:'';
+ return{ok:false,cellW,taskFont,message:`Der Rückmeldungszettel ist mit ${n} Teilaufgaben sehr dicht. Einzelne Aufgabenbezeichnungen könnten in PNG/PDF abgeschnitten oder überlagert werden.${detail} Bitte die Vorschau prüfen oder Bezeichnungen kürzen.`};
+}
+function confirmFeedbackLayout(){const q=feedbackLayoutAssessment();return q.ok||confirm(q.message+'\n\nAusgabe trotzdem erstellen?');}
+function renderFeedbackCanvasFor(s,canvas=$('feedbackCanvas')){
+ const W=1900,H=840;canvas.width=W;canvas.height=H;const c=canvas.getContext('2d');
+ const FONT='"Avenir Next", Avenir, "Helvetica Neue", Arial, sans-serif';
+ c.fillStyle='#fff';c.fillRect(0,0,W,H);const m=feedbackModel(s);if(!s){c.fillStyle='#333';c.font=`34px ${FONT}`;c.fillText('Noch keine vollständige Rückmeldung verfügbar.',60,90);return canvas;}
+ const left=55,right=W-55,accent='#245c7a',grid='#9aa3ac',soft='#f5f7f9',softAccent='#eef5f8',ink='#111',muted='#59636e';
+ const meta=[m.meta.subject,m.meta.className,m.meta.title,formatDate(m.meta.date)].filter(Boolean).join(' · ');
+ c.textAlign='left';c.textBaseline='alphabetic';c.fillStyle=ink;c.font=`600 40px ${FONT}`;c.fillText(`${s.first} ${s.last}`.trim(),left,60);
+ c.fillStyle=muted;c.font=`23px ${FONT}`;c.fillText(meta,left,96);c.fillStyle=accent;c.fillRect(left,114,right-left,5);
+
+ const tableX=left,tableY=144,tableW=right-left,taskLabelW=178,n=Math.max(1,m.tasks.length),cellW=(tableW-taskLabelW)/n,rowH=62;
+ const taskFont=Math.max(15,Math.min(23,cellW*.26));
+ c.fillStyle=soft;c.fillRect(tableX,tableY,tableW,rowH);c.fillStyle=ink;c.strokeStyle=grid;c.lineWidth=1.6;
+ for(let r=0;r<3;r++)c.strokeRect(tableX,tableY+r*rowH,tableW,rowH);
+ c.beginPath();c.moveTo(tableX+taskLabelW,tableY);c.lineTo(tableX+taskLabelW,tableY+rowH*3);c.stroke();
+ c.textBaseline='middle';c.textAlign='left';c.font=`600 21px ${FONT}`;c.fillText('Aufgabe',tableX+16,tableY+rowH/2);
+ c.font=`italic 20px ${FONT}`;c.fillText('Rohpunkte',tableX+16,tableY+rowH*1.5);c.fillText('erreichte P.',tableX+16,tableY+rowH*2.5);
+ c.textAlign='center';m.tasks.forEach((t,i)=>{const x=tableX+taskLabelW+i*cellW;c.beginPath();c.moveTo(x,tableY);c.lineTo(x,tableY+rowH*3);c.stroke();c.fillStyle=ink;c.font=`600 ${taskFont}px ${FONT}`;c.fillText(String(t.label),x+cellW/2,tableY+rowH/2);c.font=`${Math.max(15,taskFont-1)}px ${FONT}`;c.fillText(fmt(t.max),x+cellW/2,tableY+rowH*1.5);const v=s.scores?.[t.id];c.font=`600 ${Math.max(16,taskFont)}px ${FONT}`;c.fillText(v===null||v===undefined?'–':fmt(v),x+cellW/2,tableY+rowH*2.5);});
+
+ // Ergebnisleiste: Endergebnis in Notenpunkten ist die zentrale Hauptinformation.
+ const y2=tableY+rowH*3+30,resultH=150,resultW=right-left,colW=resultW/3;
+ c.fillStyle='#fff';c.fillRect(left,y2,resultW,resultH);c.strokeStyle=grid;c.lineWidth=1.6;c.strokeRect(left,y2,resultW,resultH);
+ // Mittlere Spalte bewusst hervorheben: Notenpunkte sind das eigentliche Endergebnis.
+ c.fillStyle=softAccent;c.fillRect(left+colW,y2,colW,resultH);
+ c.beginPath();c.moveTo(left+colW,y2);c.lineTo(left+colW,y2+resultH);c.moveTo(left+2*colW,y2);c.lineTo(left+2*colW,y2+resultH);c.stroke();
+ const metric=(x,label,value,size,color=ink,weight=600)=>{c.textAlign='center';c.textBaseline='alphabetic';c.fillStyle=muted;c.font=`600 17px ${FONT}`;c.fillText(label,x+colW/2,y2+38);c.fillStyle=color;c.font=`${weight} ${size}px ${FONT}`;c.fillText(value,x+colW/2,y2+102);};
+ metric(left,'GESAMTPUNKTE',m.info.complete?`${fmt(m.info.total)} / ${fmt(m.max)} P.`:'–',34,ink,600);
+ metric(left+colW,'BEWERTUNG',m.np===null?'–':`${m.np} Notenpunkte`,50,accent,700);
+ metric(left+2*colW,'ERREICHT',m.info.complete?pct(m.percent):'–',42,ink,650);
+
+ // Vollständiger Notenspiegel: 15 bis 0 NP; darüber die sechs Notengruppen.
+ const noPart=aidInfo(s,'no'),yesPart=aidInfo(s,'yes'),partY=y2+resultH+28;
+ c.textAlign='center';c.textBaseline='middle';c.fillStyle=muted;c.font=`18px ${FONT}`;c.fillText(`Teil 1 (ohne Hilfsmittel): ${pctText(noPart.pct)}   ·   Teil 2 (mit Hilfsmitteln): ${pctText(yesPart.pct)}`,left+resultW/2,partY);
+ const distY=y2+resultH+58,distX=left,distW=right-left,labelW=145,npCount=16,npW=(distW-labelW)/npCount,gradeH=36,row2H=48,row3H=48;
+ const groups=[{label:'1',start:15,end:13},{label:'2',start:12,end:10},{label:'3',start:9,end:7},{label:'4',start:6,end:4},{label:'5',start:3,end:1},{label:'6',start:0,end:0}];
+ c.strokeStyle=grid;c.lineWidth=1.4;c.fillStyle=soft;c.fillRect(distX,distY,distW,gradeH);c.strokeRect(distX,distY,distW,gradeH+row2H+row3H);
+ c.beginPath();c.moveTo(distX+labelW,distY);c.lineTo(distX+labelW,distY+gradeH+row2H+row3H);c.stroke();
+ c.textAlign='center';c.textBaseline='middle';c.fillStyle=ink;c.font=`600 18px ${FONT}`;c.fillText('Note',distX+labelW/2,distY+gradeH/2);
+ let cursor=distX+labelW;
+ groups.forEach((g,gi)=>{const span=g.start-g.end+1,w=span*npW;c.strokeRect(cursor,distY,w,gradeH);c.font=`600 18px ${FONT}`;c.fillText(g.label,cursor+w/2,distY+gradeH/2);cursor+=w;});
+ const npY=distY+gradeH,countY=npY+row2H;
+ c.fillStyle='#fff';c.fillRect(distX,npY,distW,row2H+row3H);
+ c.textAlign='left';c.font=`600 18px ${FONT}`;c.fillStyle=ink;c.fillText('Notenpunkte',distX+16,npY+row2H/2+1);c.fillText('Anzahl',distX+16,countY+row3H/2+1);
+ c.textAlign='center';
+ // Alle Einzelzellen zunächst mit einheitlich dünnem Raster zeichnen.
+ // Die stärkeren Gruppentrenner werden anschließend nur als einzelne vertikale Linie ergänzt.
+ c.lineWidth=1.1;c.strokeStyle=grid;
+ for(let idx=0;idx<16;idx++){
+   const np=15-idx,x=distX+labelW+idx*npW;
+   c.strokeRect(x,npY,npW,row2H);c.strokeRect(x,countY,npW,row3H);
+   c.fillStyle=ink;c.font=`18px ${FONT}`;c.fillText(String(np),x+npW/2,npY+row2H/2);
+   c.font=`600 18px ${FONT}`;c.fillText(String(m.npDist?.[np]??0),x+npW/2,countY+row3H/2);
+ }
+ c.lineWidth=1.6;c.strokeStyle=grid;c.strokeRect(distX,npY,labelW,row2H);c.strokeRect(distX,countY,labelW,row3H);
+ // Nur die echten Grenzen zwischen Note 1/2/3/4/5/6 verstärken.
+ c.strokeStyle='#69737d';c.lineWidth=2.4;
+ [3,6,9,12,15].forEach(idx=>{const x=distX+labelW+idx*npW;c.beginPath();c.moveTo(x,distY);c.lineTo(x,countY+row3H);c.stroke();});
+
+ if(signatureData){const img=new Image();img.src=signatureData;img.onload=()=>{const maxW=190,maxH=70,ratio=Math.min(maxW/img.width,maxH/img.height);c.drawImage(img,right-img.width*ratio,H-94,img.width*ratio,img.height*ratio);};}
+ c.textAlign='left';c.textBaseline='alphabetic';c.font=`17px ${FONT}`;c.fillStyle=muted;c.fillText('Rückmeldung zur Klausur · korrigiert am '+feedbackDateText(),left,H-28);return canvas;
+}
+function renderFeedback(){renderFeedbackDateControl();const complete=state.students.filter(s=>!s.absent&&isComplete(s));const incomplete=state.students.filter(s=>!s.absent&&!isComplete(s)),layout=feedbackLayoutAssessment(),messages=[];if(incomplete.length)messages.push(`${incomplete.length} Schüler/in(nen) sind noch unvollständig erfasst und haben noch keine fertige Rückmeldung.`);if(!layout.ok)messages.push(layout.message);$('feedbackNotice').style.display=messages.length?'block':'none';$('feedbackNotice').textContent=messages.join(' ');$('feedbackTableBody').innerHTML=state.students.filter(s=>!s.absent).map(s=>{const info=scoreInfo(s),ready=info.complete,np=ready?notePointsFor(info.total):null;return`<tr class="${s.id===state.feedbackStudentId?'selected-row':''}"><td class="student-name">${esc(s.last)}, ${esc(s.first)}</td><td class="num">${ready?`${fmt(info.total)} / ${fmt(getMax())}`:'–'}</td><td class="num">${ready?np:'–'}</td><td>${ready?`<button class="small" data-feedback-preview="${s.id}">Vorschau</button><button class="small primary" data-feedback-copy="${s.id}">Bild kopieren</button><button class="small" data-feedback-pdf="${s.id}">PDF</button>`:'<span class="muted tiny">unvollständig</span>'}</td></tr>`;}).join('')||'<tr><td colspan="4" class="muted">Keine Schüler.</td></tr>';const selected=getStudent(state.feedbackStudentId);renderFeedbackCanvasFor(selected&&isComplete(selected)?selected:null);$('copySelectedFeedbackBtn').disabled=!(selected&&isComplete(selected));$('pdfSelectedFeedbackBtn').disabled=!(selected&&isComplete(selected));$('downloadAllFeedbackBtn').disabled=!complete.length;}
+function renderAll(withDirty=true){ensureScores();renderMetaInputs();renderStudents();renderTasks();renderEntry();renderResultsTable();renderGradeKey();renderCorrection();renderSignature();renderFeedback();renderAnalysis();if(withDirty)markDirty();}
+function formatDate(s){if(!s)return'';const d=new Date(s+'T12:00:00');return Number.isNaN(d.getTime())?s:d.toLocaleDateString('de-DE');}
+function addStudentsFromColumns(lastText,firstText){const lasts=lastText.split(/\r?\n/).map(x=>x.trim()).filter(Boolean),firsts=firstText.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);if(lasts.length!==firsts.length){alert('Nachnamen- und Vornamenliste haben unterschiedlich viele Einträge.');return;}state.students=lasts.map((last,i)=>({id:uid(),last,first:firsts[i],absent:false,scores:{}}));ensureScores();state.selectedStudentId=state.students[0]?.id||null;state.feedbackStudentId=state.students[0]?.id||null;renderAll();}
+function detectSeparator(line){const semi=(line.match(/;/g)||[]).length,comma=(line.match(/,/g)||[]).length,tab=(line.match(/\t/g)||[]).length;return tab>=semi&&tab>=comma?'\t':semi>=comma?';':',';}
+function parseCsvLine(line,sep){const out=[];let cur='',q=false;for(let i=0;i<line.length;i++){const ch=line[i];if(ch==='"'){if(q&&line[i+1]==='"'){cur+='"';i++;}else q=!q;}else if(ch===sep&&!q){out.push(cur);cur='';}else cur+=ch;}out.push(cur);return out;}
+async function importStudentCsv(file){if(!file){alert('Bitte zuerst eine CSV-Datei auswählen.');return;}let text=await file.text();text=text.replace(/^\uFEFF/,'');const lines=text.split(/\r?\n/).filter(x=>x.trim().length);if(lines.length<2){alert('Die CSV-Datei enthält keine Datenzeilen.');return;}const sep=detectSeparator(lines[0]),header=parseCsvLine(lines[0],sep).map(x=>x.trim().toLowerCase()),li=header.indexOf('nachname'),fi=header.indexOf('vorname');if(li<0||fi<0){alert('Die Spalten „Nachname“ und „Vorname“ wurden nicht gefunden.');return;}const students=[];for(const line of lines.slice(1)){const cols=parseCsvLine(line,sep);const last=(cols[li]||'').trim(),first=(cols[fi]||'').trim();if(!last&&!first)continue;students.push({id:uid(),last,first,absent:false,scores:{}});}if(!students.length){alert('Keine Schülerdaten gefunden.');return;}state.students=students;ensureScores();state.selectedStudentId=students[0].id;state.feedbackStudentId=students[0].id;renderAll();toast(`${students.length} Schüler importiert · Kurs-Spalte ignoriert`);}
+function replaceTasksFromText(text){const lines=text.split(/\r?\n/).map(x=>x.trim()).filter(Boolean),tasks=[];for(const line of lines){const m=line.match(/^(.*?)[\s;\t]+([0-9]+(?:[.,][05])?)(?:[\s;\t]+(?:AFB\s*)?(I{1,3}))?\s*$/i);if(!m)continue;tasks.push({id:uid(),label:m[1].trim(),max:roundHalf(Number(m[2].replace(',','.'))),afb:(m[3]||'').toUpperCase(),aidMode:'yes'});}if(!tasks.length){alert('Keine Aufgaben erkannt. Beispiele: 1a 4 · 1a 4 I · 1a 4 AFB I');return;}state.tasks=tasks;ensureScores();renderAll();}
+function sortStudents(key){state.students.sort((a,b)=>String(a[key]||'').localeCompare(String(b[key]||''),'de',{sensitivity:'base'})||String(a.last).localeCompare(String(b.last),'de'));renderAll();}
+function sampleData(){state.meta={subject:'Mathematik',className:'M12LK',courseType:'LK',semester:'Q1',title:'1. Klausur',date:new Date().toISOString().slice(0,10)};state.tasks=[['1a',4,'I','no'],['1b',6,'II','no'],['2a',5,'I','yes'],['2b',8,'II','yes'],['3a',7,'II','yes'],['3b',10,'III','yes']].map(([label,max,afb,aidMode])=>({id:uid(),label,max,afb,aidMode}));const names=[['Becker','Anna'],['Fischer','Paul'],['Hartmann','Mia'],['Klein','Jonas'],['Meyer','Lina'],['Schmidt','Noah'],['Weber','Clara'],['Wagner','Emil']];state.students=names.map((n,idx)=>({id:uid(),last:n[0],first:n[1],absent:false,scores:{}}));ensureScores();state.students.forEach((s,si)=>state.tasks.forEach((t,ti)=>s.scores[t.id]=roundHalf(Math.max(0,Math.min(t.max,t.max*(.45+((si*7+ti*3)%50)/100))))));state.selectedStudentId=state.students[0].id;state.feedbackStudentId=state.students[0].id;state.feedbackDateMode='auto';state.feedbackDate='';state.relation=null;renderAll();}
+function safeFilePart(s){return String(s||'').normalize('NFKD').replace(/[^\w.-]+/g,'_').replace(/^_+|_+$/g,'')||'Klausur';}
+function projectName(ext){return`${safeFilePart(state.meta.className||'Kurs')}_${safeFilePart(state.meta.title||'Klausur')}${ext}`;}
+function exportTimestamp(d=new Date()){const p=n=>String(n).padStart(2,'0');return`${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}`;}
+function checkpointName(ext,d=new Date()){return projectName(`_export-${exportTimestamp(d)}${ext}`);}
+function timestampedExportName(suffix,ext,d=new Date()){return projectName(`${suffix}_export-${exportTimestamp(d)}${ext}`);}
+function studentResultName(s,ext='.pdf'){const first=safeFilePart(s?.first||'Sch');const shortFirst=Array.from(first).slice(0,3).join('')||'Sch';return`${shortFirst}_${safeFilePart(s?.last||'Schueler')}_Ergebnis${ext}`;}
+function downloadBlob(name,blob){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1500);}
+function fileExtension(name){const m=String(name||'').match(/(\.[A-Za-z0-9]+)$/);return m?m[1].toLowerCase():'';}
+function pickerType(name,blob){const mime=blob.type||'application/octet-stream',ext=fileExtension(name);if(!ext)return[];return[{description:'Datei',accept:{[mime]:[ext]}}];}
+async function shareOrDownload(name,blob){
+  // Mac: wieder klassischer Browser-Download ohne zusätzlichen Dialog (standardmäßig Downloads-Ordner).
+  if(IS_MAC){downloadBlob(name,blob);return'downloaded';}
+  // iPad/iPhone: Teilen-Dialog öffnen; dort „In Dateien sichern“ wählen und Zielordner festlegen.
+  if(IS_IOS&&navigator.share){
+    const f=new File([blob],name,{type:blob.type||'application/octet-stream'});
+    let can=true;try{if(navigator.canShare)can=navigator.canShare({files:[f]});}catch(e){}
+    if(can){
+      try{await navigator.share({files:[f],title:name});return'shared';}
+      catch(e){if(e?.name==='AbortError')return'aborted';console.warn('Teilen fehlgeschlagen',e);}
+    }
+  }
+  // Andere Desktop-Browser: wenn möglich echter „Speichern unter …“-Dialog.
+  if(typeof window.showSaveFilePicker==='function'){
+    try{
+      const handle=await window.showSaveFilePicker({suggestedName:name,types:pickerType(name,blob)});
+      const writable=await handle.createWritable();await writable.write(blob);await writable.close();
+      return'saved';
+    }catch(e){if(e?.name==='AbortError')return'aborted';console.warn('Speichern-Dialog fehlgeschlagen',e);}
+  }
+  // Fallback: normaler Browser-Download.
+  downloadBlob(name,blob);return'downloaded';
+}
+async function saveProject(){const exportDate=new Date(),exportTime=exportDate.toISOString();const payload={...state,schema:PROJECT_SCHEMA,formatVersion:PROJECT_FORMAT_VERSION,exportedAt:exportTime};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const result=await shareOrDownload(checkpointName('.oka',exportDate),blob);if(result==='saved'||result==='shared'||result==='downloaded'){state.exportedAt=exportTime;reminderState={changeCount:0,firstUnexportedAt:null};saveReminderState();persistLocalState('lokaler Arbeitsstand aktuell');updateStorageStatusUI();toast('Checkpoint exportiert');}}
+function openNewWorkDialog(){$('copyCourseChk').checked=true;$('copyStudentsChk').checked=true;$('copyTasksChk').checked=false;$('copyGradingChk').checked=true;$('newWorkDialog').showModal();}
+function createNewWorkFromDialog(){const ns=blankState();if($('copyCourseChk').checked)ns.meta={...ns.meta,subject:state.meta.subject||'Mathematik',className:state.meta.className||'',courseType:state.meta.courseType||'',semester:state.meta.semester||''};if($('copyStudentsChk').checked)ns.students=state.students.map(st=>({id:uid(),last:st.last||'',first:st.first||'',absent:false,scores:{}}));if($('copyTasksChk').checked)ns.tasks=state.tasks.map(t=>({id:uid(),label:t.label,max:t.max,afb:t.afb||'',aidMode:t.aidMode==='no'?'no':'yes'}));if($('copyGradingChk').checked)ns.gradeThresholds={...state.gradeThresholds};const now=new Date().toISOString();ns.updatedAt=now;ns.exportedAt=null;if(ns.students.length){ns.selectedStudentId=ns.students[0].id;ns.feedbackStudentId=ns.students[0].id;}registerNewWork(ns,{changeCount:1,firstUnexportedAt:now});$('newWorkDialog').close();toast('Neue Klausur angelegt.');}
+function makeupProjectTitle(){const base=(state.meta.title||'').trim();return base?(base.toLowerCase().includes('nachschreib')?base:`${base} – Nachschreibetermin`):'Nachschreibetermin';}
+function createMakeupProject(){const makeup=state.students.filter(st=>st.absent);if(!makeup.length){toast('Keine Nachschreiber markiert.');return;}const ns=blankState();ns.meta={subject:state.meta.subject||'',className:state.meta.className||'',courseType:state.meta.courseType||'',semester:state.meta.semester||'',title:makeupProjectTitle(),date:''};ns.students=makeup.map(st=>({id:uid(),last:st.last||'',first:st.first||'',absent:false,scores:{}}));ns.gradeThresholds={...state.gradeThresholds};ns.relation={type:'makeup',parentTitle:state.meta.title||'',parentDate:state.meta.date||''};const now=new Date().toISOString();ns.updatedAt=now;ns.exportedAt=null;ns.selectedStudentId=ns.students[0]?.id||null;ns.feedbackStudentId=ns.students[0]?.id||null;registerNewWork(ns,{changeCount:1,firstUnexportedAt:now},{afterCurrent:true});toast(`Nachschreibeklausur mit ${ns.students.length} Schüler${ns.students.length===1?'':'n'} angelegt.`);}
+function loadProjectFile(file){const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result);if(!o.students||!o.tasks)throw new Error('Format');if(o.schema&&o.schema!==PROJECT_SCHEMA)throw new Error('Falsches Schema');if(o.meta?.className!==undefined&&!o.meta.subject)o.meta.subject='Mathematik';const incoming=normalizeState({...o,updatedAt:o.updatedAt||o.modifiedAt||new Date(file.lastModified||Date.now()).toISOString(),exportedAt:o.exportedAt||null});if(workIndex.length===1&&isBlankLocalWork(state)){state=incoming;reminderState={changeCount:0,firstUnexportedAt:null};localStorage.setItem(workKey(currentWorkId),JSON.stringify(state));saveReminderState();updateWorkIndexFromState();ensureScores();renderAll(false);renderWorkSwitcher();updateStorageStatusUI();}else{registerNewWork(incoming,{changeCount:0,firstUnexportedAt:null});}toast('Checkpoint als lokale Klausur geladen.');}catch(e){alert('Der Checkpoint konnte nicht gelesen werden.');}};r.readAsText(file);}
+function fullCsv(){const sep=';',header=['Nachname','Vorname','Status',...state.tasks.map(t=>t.label),'Gesamt','Prozent','Notenpunkte'],rows=state.students.map(s=>{const i=scoreInfo(s),tot=i.total,status=s.absent?'Nachschreiber':(i.complete?'':'unvollständig'),gradeAllowed=!s.absent&&i.complete;return[s.last,s.first,status,...state.tasks.map(t=>s.scores?.[t.id]??''),gradeAllowed?tot:'',gradeAllowed?finalPercentForScore(tot):'',gradeAllowed?notePointsFor(tot):''];}),q=v=>{const x=String(v??'');return/[;"\n]/.test(x)?'"'+x.replace(/"/g,'""')+'"':x;};return'\ufeff'+[header,...rows].map(r=>r.map(q).join(sep)).join('\r\n');}
+async function exportCsv(){const d=new Date();await shareOrDownload(timestampedExportName('_Daten','.csv',d),new Blob([fullCsv()],{type:'text/csv;charset=utf-8'}));}
+function copyLegacy(withNames){const rows=state.students.filter(s=>!s.absent).map(s=>[...(withNames?[s.last,s.first]:[]),...state.tasks.map(t=>s.scores[t.id]??'')].join('\t')).join('\n');navigator.clipboard?.writeText(rows).then(()=>toast('Daten kopiert')).catch(()=>{const ta=document.createElement('textarea');ta.value=rows;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('Daten kopiert');});}
+let documentTitleBeforePrint=null;
+function printDocumentTitle(kind){const parts=[safeFilePart(state.meta.className||'Kurs'),safeFilePart(state.meta.title||'Klausur'),safeFilePart(kind),state.meta.date?safeFilePart(state.meta.date):''].filter(Boolean);return parts.join('_')||`Oberstufenklausur_${safeFilePart(kind)}`;}
+function preparePrintTitle(kind){if(documentTitleBeforePrint===null)documentTitleBeforePrint=document.title;document.title=printDocumentTitle(kind);}
+function restorePrintTitle(){if(documentTitleBeforePrint!==null){document.title=documentTitleBeforePrint;documentTitleBeforePrint=null;}}
+function setPrintMode(mode){document.body.classList.remove('print-correction','print-report','print-analysis');document.body.classList.add(mode);$('dynamicPageStyle').textContent=mode==='print-correction'?'@page{size:A4 landscape;margin:8mm}':'@page{size:A4 portrait;margin:12mm}';}
+function clearPrintMode(){document.body.classList.remove('print-correction','print-report','print-analysis');$('dynamicPageStyle').textContent='';}
+function cleanupPrint(){clearPrintMode();restorePrintTitle();}
+function nextPaint(){return new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));}
+async function printCorrectionDocument(){renderCorrection();preparePrintTitle('Korrekturbogen');setPrintMode('print-correction');await nextPaint();window.print();}
+function reportTableRows(){return taskStats().map(t=>`<tr><td>${esc(t.label)}</td><td>${t.afb?`AFB ${t.afb}`:'–'}</td><td>${aidLabel(t.aidMode)}</td><td style="text-align:right">${fmt(t.max)}</td><td style="text-align:right">${fmt(t.avg)}</td><td style="text-align:right">${pct(t.pct)}</td></tr>`).join('');}
+function buildPrintReport(){const st=stats(),afb=afbStats().filter(x=>x.max>0),no=aidClassSummary('no'),yes=aidClassSummary('yes'),meta=[state.meta.subject,state.meta.className,state.meta.courseType,state.meta.semester,state.meta.title,formatDate(state.meta.date)].filter(Boolean).join(' · '),dist=st.gradeDist;$('printReport').innerHTML=`<div class="report-page"><div class="report-title">${esc(state.meta.title||'Klausurauswertung')}</div><div class="report-meta">${esc(meta)} · ${st.n} ausgewertete Klausuren · ${fmt(getMax())} Maximalpunkte</div><div class="report-metrics"><div class="report-metric"><div class="k">Ø Punkte</div><div class="v">${st.avg===null?'–':fmt(st.avg)}</div></div><div class="report-metric"><div class="k">Ø Prozent</div><div class="v">${st.avgPct===null?'–':pct(st.avgPct)}</div></div><div class="report-metric"><div class="k">Median</div><div class="v">${st.med===null?'–':fmt(st.med)}</div></div><div class="report-metric"><div class="k">Ø Notenpunkte</div><div class="v">${st.avgNP===null?'–':Number(st.avgNP).toLocaleString('de-DE',{maximumFractionDigits:2})}</div></div></div><div class="report-section"><h2>Gruppierter Notenspiegel</h2><table class="report-table"><thead><tr><th>Note</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th></tr></thead><tbody><tr><td>Notenpunkte</td><td>15–13</td><td>12–10</td><td>9–7</td><td>6–4</td><td>3–1</td><td>0</td></tr><tr><td>Anzahl</td><td>${dist[1]}</td><td>${dist[2]}</td><td>${dist[3]}</td><td>${dist[4]}</td><td>${dist[5]}</td><td>${dist[6]}</td></tr></tbody></table></div><div class="report-section"><h2>Hilfsmittelvergleich</h2><table class="report-table"><thead><tr><th>Bereich</th><th>max.</th><th>Ø P.</th><th>Ø %</th></tr></thead><tbody><tr><td>ohne Hilfsmittel</td><td>${fmt(no.max)}</td><td>${fmt(no.avg)}</td><td>${pct(no.pct)}</td></tr><tr><td>mit Hilfsmitteln</td><td>${fmt(yes.max)}</td><td>${fmt(yes.avg)}</td><td>${pct(yes.pct)}</td></tr></tbody></table></div><div class="report-section"><h2>Aufgabenanalyse</h2><table class="report-table"><thead><tr><th>Aufgabe</th><th>AFB</th><th>Bereich</th><th>max.</th><th>Ø P.</th><th>Ø %</th></tr></thead><tbody>${reportTableRows()}</tbody></table></div>${afb.length?`<div class="report-section"><h2>AFB-Analyse</h2><table class="report-table"><thead><tr><th>AFB</th><th>max.</th><th>Ø P.</th><th>Ø %</th></tr></thead><tbody>${afb.map(x=>`<tr><td>AFB ${x.afb}</td><td>${fmt(x.max)}</td><td>${fmt(x.avg)}</td><td>${pct(x.pct)}</td></tr>`).join('')}</tbody></table></div>`:''}</div>`;}
+async function printReportDocument(){buildPrintReport();preparePrintTitle('Auswertungsbericht');setPrintMode('print-report');await nextPaint();window.print();}
+window.addEventListener('afterprint',cleanupPrint);if(window.matchMedia){const mq=window.matchMedia('print');mq.addEventListener?.('change',e=>{if(!e.matches)cleanupPrint();});}
+function canvasToBlob(canvas,type='image/png',quality=.95){return new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('Blob konnte nicht erzeugt werden')),type,quality));}
+async function copyFeedbackImage(s){if(!confirmFeedbackLayout())return;const canvas=document.createElement('canvas');renderFeedbackCanvasFor(s,canvas);await new Promise(r=>setTimeout(r,signatureData?80:0));const blob=await canvasToBlob(canvas,'image/png');try{if(window.ClipboardItem&&navigator.clipboard?.write){await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);toast(`${s.first} ${s.last}: Rückmeldung als Bild kopiert`);return;}}catch(e){}await shareOrDownload(studentResultName(s,'.png'),blob);toast('Bild-Zwischenablage nicht verfügbar · PNG bereitgestellt');}
+function concatBytes(parts){const len=parts.reduce((a,p)=>a+p.length,0),out=new Uint8Array(len);let o=0;for(const p of parts){out.set(p,o);o+=p.length;}return out;}
+function txt(s){return new TextEncoder().encode(s);}
+function u32(n){return new Uint8Array([n&255,(n>>>8)&255,(n>>>16)&255,(n>>>24)&255]);}
+function u16(n){return new Uint8Array([n&255,(n>>>8)&255]);}
+async function feedbackPdfBlob(s){const canvas=document.createElement('canvas');renderFeedbackCanvasFor(s,canvas);await new Promise(r=>setTimeout(r,signatureData?80:0));const jpg=await canvasToBlob(canvas,'image/jpeg',.94),img=new Uint8Array(await jpg.arrayBuffer()),W=canvas.width,H=canvas.height,wp=684,hp=wp*H/W,parts=[],offsets=[0];let pos=0;const push=p=>{parts.push(p);pos+=p.length;};push(txt('%PDF-1.4\n%\xFF\xFF\xFF\xFF\n'));function obj(n,arr){offsets[n]=pos;push(txt(`${n} 0 obj\n`));arr.forEach(push);push(txt('\nendobj\n'));}obj(1,[txt('<< /Type /Catalog /Pages 2 0 R >>')]);obj(2,[txt('<< /Type /Pages /Kids [3 0 R] /Count 1 >>')]);obj(3,[txt(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${wp.toFixed(2)} ${hp.toFixed(2)}] /Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>`)]);obj(4,[txt(`<< /Type /XObject /Subtype /Image /Width ${W} /Height ${H} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${img.length} >>\nstream\n`),img,txt('\nendstream')]);const content=txt(`q\n${wp.toFixed(2)} 0 0 ${hp.toFixed(2)} 0 0 cm\n/Im0 Do\nQ\n`);obj(5,[txt(`<< /Length ${content.length} >>\nstream\n`),content,txt('endstream')]);const xref=pos;push(txt('xref\n0 6\n0000000000 65535 f \n'));for(let i=1;i<=5;i++)push(txt(String(offsets[i]).padStart(10,'0')+' 00000 n \n'));push(txt(`trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`));return new Blob([concatBytes(parts)],{type:'application/pdf'});}
+async function pdfFeedback(s){if(!confirmFeedbackLayout())return;const blob=await feedbackPdfBlob(s);await shareOrDownload(studentResultName(s,'.pdf'),blob);}
+let crcTable=null;function makeCrcTable(){const table=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=(c&1)?0xedb88320^(c>>>1):c>>>1;table[n]=c>>>0;}return table;}function crc32(bytes){if(!crcTable)crcTable=makeCrcTable();let c=0xffffffff;for(const b of bytes)c=crcTable[(c^b)&255]^(c>>>8);return(c^0xffffffff)>>>0;}
+function dosDateTime(d=new Date()){let time=(d.getHours()<<11)|(d.getMinutes()<<5)|(d.getSeconds()>>1),date=((d.getFullYear()-1980)<<9)|((d.getMonth()+1)<<5)|d.getDate();return{time,date};}
+function makeZip(entries){const local=[],central=[];let offset=0;const dt=dosDateTime();for(const e of entries){const name=txt(e.name),data=e.data,crc=crc32(data);const lh=concatBytes([u32(0x04034b50),u16(20),u16(0),u16(0),u16(dt.time),u16(dt.date),u32(crc),u32(data.length),u32(data.length),u16(name.length),u16(0),name,data]);local.push(lh);const ch=concatBytes([u32(0x02014b50),u16(20),u16(20),u16(0),u16(0),u16(dt.time),u16(dt.date),u32(crc),u32(data.length),u32(data.length),u16(name.length),u16(0),u16(0),u16(0),u16(0),u32(0),u32(offset),name]);central.push(ch);offset+=lh.length;}const centralData=concatBytes(central),localData=concatBytes(local),end=concatBytes([u32(0x06054b50),u16(0),u16(0),u16(entries.length),u16(entries.length),u32(centralData.length),u32(localData.length),u16(0)]);return new Blob([localData,centralData,end],{type:'application/zip'});}
+async function downloadAllFeedback(){const students=state.students.filter(s=>!s.absent&&isComplete(s));if(!students.length){alert('Noch keine vollständigen Rückmeldungen.');return;}if(!confirmFeedbackLayout())return;const btn=$('downloadAllFeedbackBtn'),old=btn.textContent;btn.disabled=true;btn.textContent='PDFs werden erstellt…';try{const entries=[];for(let i=0;i<students.length;i++){const s=students[i];btn.textContent=`PDF ${i+1}/${students.length}…`;const pdf=await feedbackPdfBlob(s),data=new Uint8Array(await pdf.arrayBuffer());entries.push({name:studentResultName(s,'.pdf'),data});}const zip=makeZip(entries);const result=await shareOrDownload(timestampedExportName('_Rueckmeldungen','.zip',new Date()),zip);if(result==='saved'||result==='shared'||result==='downloaded')toast(`${entries.length} Rückmeldungen als ZIP bereitgestellt`);}catch(e){console.error(e);alert('Die ZIP-Datei konnte nicht erstellt werden.');}finally{btn.textContent=old;btn.disabled=false;}}
+
+// Navigation
+for(const b of document.querySelectorAll('nav.tabs button'))b.addEventListener('click',()=>{document.querySelectorAll('nav.tabs button').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));$('view-'+b.dataset.view).classList.add('active');if(b.dataset.view==='correction')renderCorrection();if(b.dataset.view==='feedback')renderFeedback();if(b.dataset.view==='analysis')renderAnalysis();});
+['subjectName','className','courseType','semester','examTitle','examDate'].forEach(id=>$(id).addEventListener('input',syncMetaFromInputs));
+$('importCsvBtn').onclick=()=>importStudentCsv($('studentCsvFile').files[0]);$('importStudentsBtn').onclick=()=>{addStudentsFromColumns($('studentLastPaste').value,$('studentFirstPaste').value);$('studentLastPaste').value='';$('studentFirstPaste').value='';};$('addStudentBtn').onclick=()=>{const last=prompt('Nachname:');if(last===null)return;const first=prompt('Vorname:')||'';state.students.push({id:uid(),last:last.trim(),first:first.trim(),absent:false,scores:{}});ensureScores();renderAll();};$('sortStudentsLastBtn').onclick=()=>sortStudents('last');$('sortStudentsFirstBtn').onclick=()=>sortStudents('first');$('sampleBtn').onclick=()=>{if(confirm('Aktuelle Eingaben durch Testdaten ersetzen?'))sampleData();};$('importTasksBtn').onclick=()=>replaceTasksFromText($('taskPaste').value);$('taskPaste').addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){e.preventDefault();replaceTasksFromText($('taskPaste').value);}});
+document.addEventListener('click',e=>{let id=e.target.dataset.delStudent;if(id){state.students=state.students.filter(s=>s.id!==id);renderAll();return;}id=e.target.dataset.delTask;if(id){state.tasks=state.tasks.filter(t=>t.id!==id);state.students.forEach(s=>delete s.scores[id]);renderAll();return;}id=e.target.dataset.taskUp;if(id){const i=state.tasks.findIndex(t=>t.id===id);if(i>0)[state.tasks[i-1],state.tasks[i]]=[state.tasks[i],state.tasks[i-1]];renderAll();return;}id=e.target.dataset.taskDown;if(id){const i=state.tasks.findIndex(t=>t.id===id);if(i>=0&&i<state.tasks.length-1)[state.tasks[i+1],state.tasks[i]]=[state.tasks[i],state.tasks[i+1]];renderAll();return;}id=e.target.dataset.feedbackPreview;if(id){state.feedbackStudentId=id;renderFeedback();return;}id=e.target.dataset.feedbackCopy;if(id){copyFeedbackImage(getStudent(id));return;}id=e.target.dataset.feedbackPdf;if(id){pdfFeedback(getStudent(id));return;}const sid=e.target.closest('tr')?.dataset.selectStudent;if(sid){state.selectedStudentId=sid;renderEntry();focusFirstScoreInput();return;}});
+document.addEventListener('input',e=>{const lastId=e.target.dataset.studentLast,firstId=e.target.dataset.studentFirst;if(lastId||firstId){const st=getStudent(lastId||firstId);if(st){if(lastId)st.last=e.target.value;if(firstId)st.first=e.target.value;renderCorrection();renderResultsTable();renderFeedback();markDirty();}return;}const np=e.target.dataset.gradeThreshold;if(np){state.gradeThresholds[np]=Math.max(0,Math.min(100,Number(e.target.value)));renderResultsTable();renderEntry();renderFeedback();renderAnalysis();markDirty();return;}});
+document.addEventListener('change',e=>{let id=e.target.dataset.studentAbsent;if(id){const st=getStudent(id);if(st){st.absent=e.target.checked;renderAll();}return;}id=e.target.dataset.taskLabel;if(id){const t=state.tasks.find(t=>t.id===id);if(t){t.label=e.target.value.trim();renderAll();}return;}id=e.target.dataset.taskMax;if(id){const t=state.tasks.find(t=>t.id===id),v=Number(e.target.value);if(t&&v>0){t.max=roundHalf(v);state.students.forEach(s=>{if(Number(s.scores[id])>t.max)s.scores[id]=t.max;});renderAll();}return;}id=e.target.dataset.taskAfb;if(id){const t=state.tasks.find(t=>t.id===id);if(t){t.afb=e.target.value;renderAll();}return;}id=e.target.dataset.taskAid;if(id){const t=state.tasks.find(t=>t.id===id);if(t){t.aidMode=e.target.checked?'no':'yes';renderAll();}return;}});
+$('studentSelect').onchange=e=>{state.selectedStudentId=e.target.value;renderEntry();focusFirstScoreInput();};$('prevStudentBtn').onclick=()=>{const list=state.students.filter(s=>!s.absent),i=list.findIndex(s=>s.id===state.selectedStudentId);if(i>0){state.selectedStudentId=list[i-1].id;renderEntry();renderStudents();focusFirstScoreInput();}};$('nextStudentBtn').onclick=()=>{const list=state.students.filter(s=>!s.absent),i=list.findIndex(s=>s.id===state.selectedStudentId);if(i>=0&&i<list.length-1){state.selectedStudentId=list[i+1].id;renderEntry();renderStudents();focusFirstScoreInput();}};
+$('feedbackDateMode').onchange=e=>{state.feedbackDateMode=e.target.value==='manual'?'manual':'auto';if(state.feedbackDateMode==='manual'&&!state.feedbackDate)state.feedbackDate=localDateIso();renderFeedback();markDirty();};$('feedbackDateInput').onchange=e=>{state.feedbackDate=e.target.value||localDateIso();state.feedbackDateMode='manual';renderFeedback();markDirty();};
+$('scoreGrid').addEventListener('input',e=>{const tid=e.target.dataset.scoreTask;if(!tid)return;const s=getStudent(state.selectedStudentId),t=state.tasks.find(x=>x.id===tid);if(!s||!t)return;s.scores[tid]=e.target.value===''?null:Number(e.target.value);e.target.closest('.score-box').classList.toggle('invalid',!validScore(s.scores[tid],t.max));const info=scoreInfo(s);$('studentTotal').textContent=info.filled?fmt(info.entered):'–';$('studentMax').textContent=fmt(getMax());$('studentGrade').textContent=info.complete?notePointsFor(info.total):'unvollständig';renderResultsTable();renderFeedback();renderAnalysis();markDirty();});
+$('signatureFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{signatureData=r.result;localStorage.setItem(SIGNATURE_KEY,signatureData);renderSignature();renderFeedback();};r.readAsDataURL(f);};$('removeSignatureBtn').onclick=()=>{signatureData='';localStorage.removeItem(SIGNATURE_KEY);renderSignature();renderFeedback();};
+$('printCorrectionBtn').onclick=printCorrectionDocument;$('printReportBtn').onclick=printReportDocument;$('analysisPrintBtn').onclick=printAnalysis;$('analysisJsonBtn').onclick=exportAnalysisJson;$('analysisCsvBtn').onclick=exportAnalysisCsv;document.querySelectorAll('[data-analysis-mode]').forEach(b=>b.onclick=()=>setAnalysisMode(b.dataset.analysisMode));$('copySelectedFeedbackBtn').onclick=()=>{const s=getStudent(state.feedbackStudentId);if(s)copyFeedbackImage(s);};$('pdfSelectedFeedbackBtn').onclick=()=>{const s=getStudent(state.feedbackStudentId);if(s)pdfFeedback(s);};$('downloadAllFeedbackBtn').onclick=downloadAllFeedback;
+$('csvBtn').onclick=exportCsv;$('copyExcelBtn').onclick=()=>copyLegacy(true);$('copyNumbersBtn').onclick=()=>copyLegacy(false);$('saveProjectBtn').onclick=saveProject;if($('newWorkHeaderBtn'))$('newWorkHeaderBtn').onclick=openNewWorkDialog;$('exportCheckpointBtn').onclick=saveProject;$('exportReminderBtn').onclick=saveProject;$('loadProjectBtn').onclick=()=>$('projectFile').click();$('projectFile').onchange=e=>{const f=e.target.files[0];if(f)loadProjectFile(f);e.target.value='';};$('createMakeupProjectBtn').onclick=createMakeupProject;$('clearAutosaveBtn').onclick=deleteCurrentWork;$('workSelect').onchange=e=>switchToWork(e.target.value);$('newWorkBtn').onclick=openNewWorkDialog;$('deleteWorkBtn').onclick=deleteCurrentWork;document.querySelectorAll('#moreMenu .more-panel button').forEach(b=>b.addEventListener('click',()=>{$('moreMenu')?.removeAttribute('open');}));$('cancelNewWorkBtn').onclick=()=>$('newWorkDialog').close();$('createNewWorkBtn').onclick=createNewWorkFromDialog;
+function configurePlatformUI(){if(IS_IOS){$('iosBadge').classList.remove('hidden');$('iosCorrectionHint').style.display='block';if($('iosExportHint'))$('iosExportHint').style.display='block';$('csvBtn').textContent='CSV sichern / teilen';$('printCorrectionBtn').textContent='Korrekturbogen / PDF über iPadOS';}if(IS_MAC){$('saveProjectBtn').title='Checkpoint direkt in Downloads exportieren';}}
+let restoredLocal=false;
+workIndex=loadWorkIndex();
+if(!workIndex.length){
+ let legacy=null;try{const raw=localStorage.getItem(LEGACY_AUTOSAVE_KEY);if(raw)legacy=JSON.parse(raw);}catch(e){}
+ currentWorkId=uid();state=normalizeState(legacy&&legacy.students&&legacy.tasks?legacy:blankState());workIndex=[workIndexMeta(currentWorkId,state)];saveWorkIndex();localStorage.setItem(CURRENT_WORK_KEY,currentWorkId);localStorage.setItem(workKey(currentWorkId),JSON.stringify(state));
+ if(legacy){restoredLocal=true;try{const oldReminder=localStorage.getItem(LEGACY_REMINDER_KEY);if(oldReminder)localStorage.setItem(reminderKey(currentWorkId),oldReminder);}catch(e){}localStorage.removeItem(LEGACY_AUTOSAVE_KEY);localStorage.removeItem(LEGACY_REMINDER_KEY);}
+}else{
+ currentWorkId=localStorage.getItem(CURRENT_WORK_KEY);if(!currentWorkId||!workIndex.some(w=>w.id===currentWorkId))currentWorkId=workIndex[0].id;localStorage.setItem(CURRENT_WORK_KEY,currentWorkId);let loaded=null;try{loaded=JSON.parse(localStorage.getItem(workKey(currentWorkId))||'null');}catch(e){}state=normalizeState(loaded||blankState());restoredLocal=!!loaded;
+}
+loadReminderState();ensureScores();configurePlatformUI();renderAll(false);renderWorkSwitcher();$('autosaveBadge').textContent=restoredLocal?'lokale Klausur wiederhergestellt':'lokale Klausur bereit';updateStorageStatusUI();setInterval(updateExportReminderUI,60000);
+})();
+</script>
+</body>
+</html>
