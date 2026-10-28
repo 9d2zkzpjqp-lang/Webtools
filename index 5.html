@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#163e30">
+  <meta name="description" content="Basketball bei Grün-Weiß Gießen: Wir spielen montags von 20 bis 22 Uhr in der Sporthalle B der Herderschule. Neue Mitspielerinnen und Mitspieler sind herzlich willkommen!">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="GWG Basketball">
+  <meta property="og:title" content="GWG Basketball · Grün-Weiß Gießen">
+  <meta property="og:description" content="Keine Liga mehr. Aber jede Menge Basketball. Montags, 20–22 Uhr, Halle B der Herderschule Gießen. Komm vorbei!">
+  <title>GWG Basketball – Grün-Weiß Gießen | Montags mitspielen</title>
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <style>
+    :root{--forest:#163e30;--forest-deep:#0e2921;--ink:#192720;--cream:#f7f6f0;--paper:#ecefe6;--white:#fff;--lime:#d8f078;--orange:#fa9561;--muted:#647068;--line:#dce0d6;--radius:21px;--max:1180px}
+    *,*::before,*::after{box-sizing:border-box}
+    html{scroll-behavior:smooth;scroll-padding-top:6rem}
+    body{margin:0;background:var(--cream);color:var(--ink);font-family:Arial,"Helvetica Neue",Helvetica,sans-serif;-webkit-font-smoothing:antialiased}
+    a{color:inherit;text-underline-offset:.2em}a:focus-visible,button:focus-visible{outline:3px solid var(--orange);outline-offset:4px}
+    button{font:inherit}.wrap{max-width:var(--max);margin-inline:auto;padding-inline:clamp(21px,4vw,48px)}
+    .eyebrow{font-size:.72rem;line-height:1.4;letter-spacing:.17em;font-weight:900;text-transform:uppercase}
+    .tagline{background:var(--forest-deep);color:#e1f1c9;text-align:center;padding:9px 12px;font-size:.7rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+    .navbar{background:var(--cream);border-bottom:1px solid var(--line);position:relative;z-index:3}
+    .navbar-inner{display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:82px}
+    .brand{display:inline-flex;align-items:center;gap:11px;text-decoration:none;min-width:0}
+    .brand-mark{flex:0 0 auto;width:46px;height:46px;border-radius:50%;background:var(--forest);color:var(--lime);display:grid;place-items:center;font-family:Impact,"Arial Black",sans-serif;font-size:1.02rem;font-weight:900;letter-spacing:-.04em;box-shadow:inset 0 0 0 3px var(--forest),inset 0 0 0 4px rgba(255,255,255,.45)}
+    .brand-text{display:flex;flex-direction:column;gap:2px;line-height:1}.brand-title{font-size:1.07rem;letter-spacing:-.025em;font-weight:950}.brand-sub{font-size:.63rem;letter-spacing:.16em;text-transform:uppercase;font-weight:800;color:var(--muted)}
+    .nav-links{display:flex;align-items:center;gap:clamp(16px,2.7vw,34px)}.nav-links a{text-decoration:none;font-size:.86rem;font-weight:800;white-space:nowrap}.nav-links a:hover{color:#2d704c}
+    .nav-links .nav-cta{padding:13px 19px;background:var(--forest);color:white;border-radius:8px}.nav-links .nav-cta:hover{color:var(--lime)}
+    .hero{position:relative;background:var(--forest);color:white;overflow:hidden;isolation:isolate}
+    .hero::before{content:"";position:absolute;inset:0;opacity:.11;pointer-events:none;background-image:linear-gradient(90deg, transparent 49.75%,#cdeacb 49.9%,#cdeacb 50.1%,transparent 50.25%),radial-gradient(circle at 77% 49%,transparent 0 24%,#d7e9ce 24.1% 24.3%,transparent 24.4%);background-size:100% 100%}
+    .hero-inner{min-height:560px;display:grid;grid-template-columns:1.12fr .88fr;gap:2rem;align-items:center;position:relative;padding-block:74px 88px}
+    .hero-copy{position:relative;z-index:1}.hero-kicker{color:var(--lime);display:flex;align-items:center;gap:11px;margin-bottom:25px}.hero-kicker::before{content:"";width:23px;height:2px;background:var(--lime)}
+    h1,h2,h3,p{margin-top:0}h1,h2,.massive{font-family:Impact,"Arial Narrow","Arial Black",sans-serif;font-stretch:condensed;text-transform:uppercase;letter-spacing:.005em}
+    h1{font-size:clamp(3.75rem,7.5vw,7rem);line-height:.98;max-width:740px;margin-bottom:23px;font-weight:900}
+    h1 span{color:var(--lime)}.hero-lead{max-width:520px;color:#d4e1d6;font-size:clamp(1rem,1.7vw,1.22rem);line-height:1.62;margin-bottom:30px}
+    .actions{display:flex;gap:12px;flex-wrap:wrap}.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:51px;padding:13px 19px;border-radius:7px;font-size:.88rem;font-weight:900;text-decoration:none;transition:transform .18s ease,background .18s ease;border:1px solid transparent}.btn:hover{transform:translateY(-2px)}.btn-primary{background:var(--lime);color:var(--forest-deep)}.btn-outline{border-color:#7c998a;color:white}.btn-outline:hover{background:#ffffff14}
+    .arrow{font-size:1.15rem;line-height:1}.hero-art{position:relative;min-height:420px;display:grid;place-items:center}
+    .circle-halo{position:absolute;aspect-ratio:1;width:105%;max-width:520px;border:1px solid rgba(255,255,255,.18);border-radius:50%}.circle-halo::before,.circle-halo::after{content:"";position:absolute;border:1px dashed rgba(255,255,255,.16);border-radius:50%;inset:22px}.circle-halo::after{inset:64px;border-style:solid}
+    .basketball{width:clamp(255px,34vw,415px);aspect-ratio:1;filter:drop-shadow(26px 34px 1px rgba(0,0,0,.2));transform:rotate(-13deg);position:relative;z-index:1}
+    .basketball svg{width:100%;height:100%}.stamp{position:absolute;z-index:2;left:0;bottom:10%;width:123px;height:123px;border-radius:50%;background:var(--lime);color:var(--forest-deep);display:grid;place-items:center;text-align:center;transform:rotate(-12deg);font-weight:950;font-size:.77rem;line-height:1.35;letter-spacing:.07em;text-transform:uppercase;border:6px solid var(--forest);box-shadow:0 0 0 1px var(--lime)}
+    .hero-bottom{background:#0f3127;color:#e6eadf}.hero-bottom-inner{min-height:90px;display:grid;grid-template-columns:repeat(3,1fr);align-items:center}.hero-fact{padding:18px 28px;border-right:1px solid #ffffff23;display:flex;align-items:center;gap:16px}.hero-fact:first-child{padding-left:0}.hero-fact:last-child{border:0}.fact-number{font-family:Impact,"Arial Black",sans-serif;color:var(--lime);font-size:2.2rem;line-height:1}.fact-text{line-height:1.4;font-size:.85rem}.fact-text strong{display:block;font-size:.9rem}
+    .section{padding-block:clamp(75px,10vw,125px)}.section-heading{max-width:800px;margin-bottom:32px}.section-heading .eyebrow{color:#547651;margin-bottom:16px}.section-heading h2{font-size:clamp(2.8rem,6.2vw,5.8rem);line-height:1.01;margin-bottom:15px}.section-heading p{color:#54635a;font-size:1.05rem;line-height:1.65;max-width:710px}
+    .intro-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(35px,7vw,92px);align-items:center}
+    .intro-card{background:var(--paper);border-radius:20px;padding:clamp(25px,5vw,52px);min-height:345px;position:relative;overflow:hidden}.intro-card::before{content:"";width:290px;height:290px;border:2px solid #ccdbcd;border-radius:50%;position:absolute;right:-110px;bottom:-170px;box-shadow:0 0 0 45px var(--paper),0 0 0 47px #d6e0d5}
+    .intro-card .big-quote{font-size:clamp(2.2rem,4.2vw,3.4rem);line-height:1.07;font-weight:950;letter-spacing:-.075em;max-width:400px;position:relative}.big-quote .accent{color:#327f4f}.intro-card .squiggle{display:block;margin-top:28px;font-size:3rem;color:#69a26a;font-weight:900;line-height:1;transform:rotate(-8deg);width:max-content}
+    .checklist{display:grid;gap:20px}.checkitem{display:flex;gap:14px;align-items:flex-start}.checkicon{width:34px;height:34px;background:#e6efdc;color:var(--forest);border-radius:50%;display:grid;place-items:center;font-size:1rem;font-weight:900;flex-shrink:0}.checkitem strong{display:block;margin:1px 0 5px;font-size:1rem}.checkitem p{color:var(--muted);line-height:1.55;font-size:.9rem;margin:0}
+    .training{background:#e8ede4}.training-head{margin-bottom:30px}.training-grid{display:grid;grid-template-columns:.95fr 1.05fr;border-radius:22px;overflow:hidden;background:white;box-shadow:0 22px 56px rgba(20,54,39,.07)}
+    .training-info{padding:clamp(27px,5vw,56px);background:var(--forest-deep);color:white}.training-info .eyebrow{color:var(--lime);margin-bottom:29px}.training-time{font-family:Impact,"Arial Black",sans-serif;font-size:clamp(3.5rem,7vw,6.4rem);line-height:.94;text-transform:uppercase;margin-bottom:11px}.training-time span{color:var(--lime)}.training-day{font-size:1.1rem;font-weight:900;margin-bottom:31px}.training-place{display:flex;gap:13px;border-top:1px solid #ffffff29;padding-top:25px;margin-bottom:26px}.training-place svg{width:24px;flex-shrink:0;color:var(--lime)}.training-place strong{display:block;line-height:1.4;margin-bottom:5px}.training-place p{margin-bottom:0;color:#c4d9cc;font-size:.9rem;line-height:1.55}.training-info .btn{width:100%;max-width:270px}
+    .directions{padding:clamp(27px,4.5vw,48px);display:flex;flex-direction:column;gap:22px}.direction-top{display:flex;align-items:center;gap:12px}.direction-icon{width:42px;height:42px;display:grid;place-items:center;border-radius:10px;background:#e6eee3;color:var(--forest)}.directions h3{font-size:1.33rem;margin-bottom:3px;letter-spacing:-.04em}.directions p{font-size:.9rem;color:#607068;line-height:1.55;margin-bottom:0}
+    .osm-map{min-height:274px;height:274px;position:relative;border-radius:15px;overflow:hidden;background:#ebefe7;border:1px solid #d2dfd2;isolation:isolate}
+    .osm-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:11px;text-align:center;padding:22px;background:repeating-linear-gradient(0deg,transparent 0 42px,#d4ded4 43px 44px),repeating-linear-gradient(90deg,transparent 0 54px,#d4ded4 55px 56px),linear-gradient(125deg,#f2f5ec,#dce8d6)}
+    .osm-placeholder::before{content:"";position:absolute;inset:0;background:linear-gradient(31deg,transparent 44%,#fdfef8 44% 48%,transparent 48% 100%),linear-gradient(128deg,transparent 57%,#fdfef8 57% 61%,transparent 61% 100%);pointer-events:none}
+    .osm-placeholder>*{position:relative;z-index:1}.osm-pin{background:var(--forest);border-radius:99px;color:white;font-size:.75rem;font-weight:900;letter-spacing:.04em;padding:8px 13px;box-shadow:0 7px 20px #163e3033}
+    .osm-load{border:0;background:var(--forest);color:white;border-radius:8px;padding:13px 18px;cursor:pointer;font-weight:900;box-shadow:0 5px 13px #163e302b}.osm-load:hover{background:#276247}.osm-notice{font-size:.72rem!important;color:#41564a!important;max-width:345px;background:#f7fbf2e8;border-radius:7px;padding:7px 9px}
+    .osm-map iframe{display:block;border:0;width:100%;height:100%;background:#fff}.osm-close{position:absolute;top:9px;right:9px;z-index:2;background:#fff;color:#143f30;border:2px solid #163e30;padding:8px 11px;border-radius:8px;cursor:pointer;font-weight:850;box-shadow:0 4px 14px #0002}.osm-close:hover{background:#f3f8ee}.osm-attribution{font-size:.74rem!important;color:#627469!important}
+    .map-buttons{display:flex;flex-wrap:wrap;gap:9px}.map-link{display:inline-flex;gap:7px;align-items:center;justify-content:center;padding:11px 13px;border-radius:7px;background:#f0f3ec;text-decoration:none;font-weight:800;font-size:.82rem}.map-link:hover{background:#e3eadc}.map-explain{font-size:.79rem!important;color:#718077!important}
+    .archive{background:var(--cream);overflow:hidden}.archive .section-heading h2 span{color:#487b4e}.archive-sub{display:inline-block;border:1px solid #becdbb;padding:8px 11px;border-radius:100px;font-size:.71rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#537255;margin-top:2px}
+    .photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:23px;margin-top:44px}.polaroid{background:#fff;padding:12px 12px 19px;box-shadow:0 14px 35px #202e1b14;transform:rotate(-2deg);min-width:0}.polaroid:nth-child(2){transform:rotate(2deg) translateY(13px)}.polaroid:nth-child(3){transform:rotate(-1deg)}
+    .placeholder{height:clamp(200px,24vw,286px);overflow:hidden;position:relative;display:grid;place-items:center;background:#d6dfd2;color:#52725b}.polaroid:nth-child(2) .placeholder{background:#e2decd;color:#8e8769}.polaroid:nth-child(3) .placeholder{background:#ccd9c9;color:#597760}
+    .placeholder::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 4px,#ffffff18 5px);pointer-events:none}.placeholder svg{width:clamp(90px,14vw,160px);opacity:.56}.photo-label{font-family:Georgia,serif;font-style:italic;font-weight:700;text-align:center;padding-top:19px;color:#536153;font-size:1.04rem}
+    .archive-note{max-width:580px;margin:43px auto 0;color:#617366;line-height:1.6;text-align:center;font-size:.9rem}
+    .lastcall{background:var(--lime);padding-block:66px}.lastcall-inner{display:flex;align-items:center;justify-content:space-between;gap:25px}.lastcall h2{font-size:clamp(2.8rem,5.5vw,5rem);line-height:1;margin:0}.lastcall p{font-size:.98rem;line-height:1.55;margin:12px 0 0;max-width:620px}.lastcall .btn{background:var(--forest-deep);color:white;white-space:nowrap;flex-shrink:0}
+    .footer{background:var(--forest-deep);color:#d0dfd1;padding:38px 0 30px}.footer-inner{display:flex;justify-content:space-between;align-items:center;gap:25px;flex-wrap:wrap}.footer-name{font-weight:950;font-size:1.13rem;letter-spacing:-.03em;color:white}.footer-name small{display:block;color:#a7bcb0;font-size:.75rem;font-weight:500;margin-top:7px;letter-spacing:normal}.footer-links{display:flex;gap:17px;flex-wrap:wrap;font-size:.77rem}.footer a:hover{color:var(--lime)}
+    @media(max-width:900px){.hero-inner{grid-template-columns:1fr .78fr;gap:0;min-height:500px}.hero-art{min-height:310px}.basketball{width:clamp(220px,31vw,300px)}.stamp{width:94px;height:94px;font-size:.66rem;bottom:3%}.intro-grid{gap:30px}}
+    @media(max-width:700px){.navbar-inner{min-height:73px}.nav-links a:not(.nav-cta){display:none}.nav-links .nav-cta{padding:11px 14px}.hero-inner{grid-template-columns:1fr;gap:0;padding-top:62px;padding-bottom:48px}.hero h1{font-size:clamp(3.8rem,11.3vw,5.8rem);margin-bottom:18px}.hero-lead{font-size:1rem;line-height:1.55;max-width:440px}.hero-art{min-height:230px;margin-top:15px;display:flex;justify-content:center}.basketball{width:clamp(218px,55vw,300px)}.circle-halo{width:275px}.stamp{left:calc(50% - 147px);bottom:0}.hero-bottom-inner{grid-template-columns:1fr 1fr}.hero-fact{padding:16px 9px;gap:10px}.hero-fact:first-child{padding-left:0}.hero-fact:last-child{grid-column:1/-1;padding:14px 0;border-top:1px solid #ffffff23}.fact-number{font-size:1.8rem}.fact-text{font-size:.78rem}.fact-text strong{font-size:.82rem}.intro-grid,.training-grid{grid-template-columns:1fr}.intro-card{min-height:255px}.photo-grid{gap:12px}.polaroid{padding:6px 6px 11px}.photo-label{font-size:.72rem;padding-top:11px}.placeholder{height:150px}.placeholder svg{width:76px}.lastcall-inner{flex-direction:column;align-items:flex-start}.lastcall .btn{width:100%;max-width:350px}.lastcall{padding-block:55px}}
+    @media(max-width:430px){.tagline{font-size:.6rem;letter-spacing:.075em}.brand-mark{width:39px;height:39px;font-size:.91rem}.brand-title{font-size:.91rem}.brand-sub{font-size:.56rem}.nav-links .nav-cta{font-size:.76rem;padding:10px 12px}.hero h1{font-size:clamp(3.4rem,12.7vw,4.2rem)}.hero-art{margin-top:5px}.intro-card .big-quote{font-size:2.3rem}.photo-grid{grid-template-columns:1fr 1fr;gap:18px 12px}.polaroid:last-child{grid-column:1/-1;width:68%;justify-self:center;display:block}.placeholder{height:183px}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}}
+
+    /* Original club crest */
+    .brand .logo-original{object-fit:contain;background:#fff;border:2px solid #e1e8db;padding:1px;box-shadow:none;display:block}
+    /* Archive gallery: 9 highlights + expandable collection of 20 historic photos */
+    .photo-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin-top:40px}
+    .photo-card{appearance:none;cursor:zoom-in;border:0;text-align:left;font:inherit;color:inherit;border-radius:3px;padding:10px 10px 16px;display:block;transform:rotate(-1deg);transition:transform .18s ease,box-shadow .18s ease}
+    .photo-card:nth-child(3n+2){transform:rotate(1.25deg) translateY(5px)}
+    .photo-card:nth-child(3n+3){transform:rotate(-.4deg)}
+    .photo-card:hover,.photo-card:focus-visible{transform:translateY(-5px) rotate(0deg);box-shadow:0 20px 42px #202e1b29}
+    .photo-card[hidden]{display:none!important}
+    .photo-frame{display:block;width:100%;aspect-ratio:11/8;overflow:hidden;background:#e9efe4}
+    .photo-frame img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .23s ease}
+    .photo-card:hover .photo-frame img{transform:scale(1.025)}
+    .photo-label{display:block;padding-top:14px;text-align:center;color:#3b5845;font-size:clamp(.81rem,1.55vw,1rem);line-height:1.35}
+    .photo-year{font-family:Arial,sans-serif;font-style:normal;background:#deecdb;color:#245337;border-radius:3px;display:inline-block;padding:2px 6px;font-size:.73em;margin-right:4px;vertical-align:2px;font-weight:900}
+    .gallery-more-wrap{text-align:center;margin-top:42px}
+    .gallery-more{border:1px solid var(--forest);background:var(--forest);color:#fff;border-radius:8px;padding:15px 21px;font-size:.9rem;font-weight:900;cursor:pointer;min-height:50px}
+    .gallery-more:hover{background:#245742}.gallery-more span{margin-left:9px}
+    .archive-note{margin-top:22px}
+    .photo-dialog{border:0;padding:0;background:transparent;color:#fff;max-width:min(1040px,96vw);max-height:95dvh;overflow:visible}
+    .photo-dialog::backdrop{background:rgba(4,21,13,.91);backdrop-filter:blur(4px)}
+    .dialog-inner{background:#122d22;border:1px solid #ffffff34;border-radius:12px;padding:clamp(10px,2vw,21px);display:flex;flex-direction:column;align-items:center;gap:9px;position:relative;box-shadow:0 25px 90px #0009}
+    .dialog-photo{display:block;width:auto;max-width:min(900px,87vw);max-height:72dvh;height:auto;object-fit:contain;min-height:0}
+    .dialog-bar{width:100%;display:flex;gap:10px;align-items:center;justify-content:space-between;color:#f0f8ed;font-size:.92rem}
+    .dialog-count{font-size:.75rem;color:#a7c4aa;white-space:nowrap}
+    .dialog-tools{display:flex;gap:9px;align-items:center}
+    .dialog-button{min-width:42px;min-height:42px;border:1px solid #ffffff45;background:#ffffff18;color:white;border-radius:6px;font:inherit;font-size:1.06rem;cursor:pointer}
+    .dialog-button:hover{background:#ffffff30}
+    .dialog-close{position:absolute;right:12px;top:12px;min-width:43px;min-height:43px;background:#0f2a22db;z-index:3}
+    @media(max-width:700px){.photo-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:17px 13px}.photo-card{padding:7px 7px 11px}.photo-label{font-size:.76rem;padding-top:10px}.dialog-photo{max-width:88vw;max-height:70dvh}}
+    @media(max-width:430px){.photo-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 12px}.photo-card:last-child{grid-column:auto;width:auto;justify-self:stretch}.photo-label{font-size:.72rem}.brand .logo-original{width:43px;height:43px}}
+    @media(prefers-reduced-motion:reduce){.photo-card,.photo-frame img{transition:none}}
+  </style>
+</head>
+<body>
+  <div class="tagline">Grün-Weiß Gießen &nbsp;·&nbsp; Basketball aus Freude am Spiel</div>
+  <header class="navbar">
+    <div class="wrap navbar-inner">
+      <a class="brand" href="#start" aria-label="GWG Basketball – zur Startseite">
+        <img class="brand-mark logo-original" src="assets/gwg-logo.png" alt="" width="46" height="46">
+        <span class="brand-text"><span class="brand-title">GWG BASKETBALL</span><span class="brand-sub">Grün-Weiß Gießen</span></span>
+      </a>
+      <nav class="nav-links" aria-label="Hauptnavigation">
+        <a href="#ueber-uns">Über uns</a><a href="#training">Training & Anfahrt</a><a href="#hall-of-fame">Hall of Fame</a>
+        <a class="nav-cta" href="mailto:j.koelb@gmx.de?subject=Probetraining%20bei%20GWG%20Basketball&amp;body=Hallo%20Jan%2C%0A%0Aich%20w%C3%BCrde%20gerne%20mal%20beim%20Basketballtraining%20vorbeischauen.%0A%0AViele%20Gr%C3%BC%C3%9Fe">Mitspielen ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="start">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="wrap hero-inner">
+        <div class="hero-copy">
+          <div class="eyebrow hero-kicker">GWG Basketball · Gießen</div>
+          <h1 id="hero-title">Keine Liga<br>mehr. <span>Aber jede<br>Menge Basketball.</span></h1>
+          <p class="hero-lead">Wir treffen uns einmal pro Woche, werfen Körbe und haben Spaß am Spiel. Ganz ohne Tabelle – und immer offen für neue Gesichter.</p>
+          <div class="actions">
+            <a class="btn btn-primary" href="mailto:j.koelb@gmx.de?subject=Probetraining%20bei%20GWG%20Basketball&amp;body=Hallo%20Jan%2C%0A%0Aich%20w%C3%BCrde%20gerne%20mal%20beim%20Basketballtraining%20vorbeischauen.%0A%0AViele%20Gr%C3%BC%C3%9Fe">Ich will mitspielen <span class="arrow" aria-hidden="true">↗</span></a>
+            <a class="btn btn-outline" href="#training">Wann & wo? <span aria-hidden="true">↓</span></a>
+          </div>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <div class="circle-halo"></div>
+          <div class="basketball">
+            <svg viewBox="0 0 420 420" role="presentation" focusable="false">
+              <defs><radialGradient id="ballShade" cx="31%" cy="25%" r="80%"><stop stop-color="#ffb37b"/><stop offset=".58" stop-color="#f18a50"/><stop offset="1" stop-color="#c75d35"/></radialGradient></defs>
+              <circle cx="210" cy="210" r="197" fill="url(#ballShade)" stroke="#2c281f" stroke-width="12"/>
+              <clipPath id="ballMask"><circle cx="210" cy="210" r="192"/></clipPath>
+              <g clip-path="url(#ballMask)" stroke="#40291d" stroke-width="11" fill="none" stroke-linecap="round">
+                <path d="M210-16V436M-15 210h450"/>
+                <path d="M-38 62C140 70 146 158 147 210s-6 141-185 149"/>
+                <path d="M458 62C280 70 274 158 273 210s6 141 185 149"/>
+              </g>
+              <ellipse cx="152" cy="84" rx="70" ry="22" fill="#ffe9bb" opacity=".14" transform="rotate(-28 152 84)"/>
+            </svg>
+          </div>
+          <div class="stamp">Neue<br>Mitspieler<br>willkommen!</div>
+        </div>
+      </div>
+      <div class="hero-bottom">
+        <div class="wrap hero-bottom-inner">
+          <div class="hero-fact"><span class="fact-number" aria-hidden="true">MO</span><span class="fact-text"><strong>Jeden Montag</strong>Unser Basketballabend</span></div>
+          <div class="hero-fact"><span class="fact-number" aria-hidden="true">20–22</span><span class="fact-text"><strong>20:00–22:00 Uhr</strong>Zwei Stunden Basketball</span></div>
+          <div class="hero-fact"><span class="fact-number" aria-hidden="true">B</span><span class="fact-text"><strong>Herderschule · Halle B</strong>35398 Gießen</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="ueber-uns" class="section">
+      <div class="wrap intro-grid">
+        <div>
+          <div class="section-heading">
+            <div class="eyebrow">01 / Über uns</div>
+            <h2>Der Ball<br>rollt weiter.</h2>
+            <p>Früher ging es auch um Tabellenplätze. Heute geht es vor allem darum, gemeinsam Basketball zu spielen. Wir sind die Basketballgruppe von Grün-Weiß Gießen – ohne Ligabetrieb, aber mit Freude am Sport.</p>
+          </div>
+          <div class="checklist">
+            <div class="checkitem"><span class="checkicon" aria-hidden="true">✓</span><div><strong>Einmal die Woche gemeinsam spielen</strong><p>Montags treffen wir uns zum Basketball – einfach, weil es Spaß macht.</p></div></div>
+            <div class="checkitem"><span class="checkicon" aria-hidden="true">✓</span><div><strong>Keine Spiele am Wochenende</strong><p>Wir nehmen nicht mehr am regulären Rundenbetrieb teil.</p></div></div>
+            <div class="checkitem"><span class="checkicon" aria-hidden="true">✓</span><div><strong>Neue Gesichter? Sehr gerne!</strong><p>Du möchtest mitspielen? Schreib uns oder komm einfach mal vorbei.</p></div></div>
+          </div>
+        </div>
+        <aside class="intro-card" aria-label="Unser Motto">
+          <div class="eyebrow" style="color:#628366;margin-bottom:22px">Unser Motto</div>
+          <div class="big-quote">Die Beine vielleicht nicht mehr ganz so schnell. <span class="accent">Die Lust am Spiel schon.</span></div>
+          <span class="squiggle" aria-hidden="true">↗</span>
+        </aside>
+      </div>
+    </section>
+
+    <section id="training" class="section training">
+      <div class="wrap">
+        <div class="section-heading training-head"><div class="eyebrow">02 / Training & Anfahrt</div><h2>Hier geht's<br>aufs Parkett.</h2><p>Du willst mitspielen? Hier findest du uns. Eine kurze Mail vorab ist willkommen – du kannst aber auch einfach beim Training vorbeischauen.</p></div>
+        <div class="training-grid">
+          <div class="training-info">
+            <div class="eyebrow">Unser fester Termin</div>
+            <div class="training-time">Mon<span>tag</span></div>
+            <div class="training-day">20:00 bis 22:00 Uhr</div>
+            <div class="training-place">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+              <div><strong>Sporthalle B · Herderschule Gießen</strong><p>Kropbacher Weg 45<br>35398 Gießen</p></div>
+            </div>
+            <a class="btn btn-primary" href="mailto:j.koelb@gmx.de?subject=Probetraining%20bei%20GWG%20Basketball&amp;body=Hallo%20Jan%2C%0A%0Aich%20w%C3%BCrde%20gerne%20mal%20beim%20Basketballtraining%20vorbeischauen.%0A%0AViele%20Gr%C3%BC%C3%9Fe">Jan kontaktieren <span aria-hidden="true">↗</span></a>
+          </div>
+          <div class="directions">
+            <div class="direction-top"><span class="direction-icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Z"/><path d="M9 3v15M15 6v15"/></svg></span><div><h3>So findest du uns</h3><p>In der Weststadt, auf dem Gelände der Herderschule.</p></div></div>
+            <div class="osm-map" id="osm-map" aria-label="Interaktiver Kartenbereich für Sporthalle B">
+              <div class="osm-placeholder">
+                <span class="osm-pin" aria-hidden="true">⌖ &nbsp; SPORTHALLE B · HERDERSCHULE</span>
+                <button class="osm-load" id="osm-load" type="button" aria-controls="osm-map">🗺 &nbsp; OpenStreetMap-Karte laden</button>
+                <p class="osm-notice">Mit dem Klick willigst du ein, die externe Karte zu laden. Dabei werden u. a. deine IP-Adresse und Browserdaten an OpenStreetMap übertragen. <a href="datenschutz.html#s4">Mehr dazu im Datenschutz</a>.</p>
+              </div>
+            </div>
+            <p class="osm-attribution">Kartenbasis: © OpenStreetMap-Mitwirkende · Der Marker zeigt direkt auf Sporthalle B.</p>
+            <div><p style="font-weight:800;color:var(--ink);margin-bottom:11px">Route direkt auf dem Smartphone öffnen:</p><div class="map-buttons">
+              <a class="map-link" href="https://www.openstreetmap.org/?mlat=50.59131&amp;mlon=8.65874#map=18/50.59131/8.65874" target="_blank" rel="noopener noreferrer">◎ OpenStreetMap ↗</a>
+              <a class="map-link" href="https://maps.apple.com/?q=Sporthalle%20B%20Herderschule%20Gie%C3%9Fen&amp;address=Kropbacher%20Weg%2045%2C%2035398%20Gie%C3%9Fen" target="_blank" rel="noopener noreferrer">⌁ Apple Karten ↗</a>
+              <a class="map-link" href="https://www.google.com/maps/search/?api=1&amp;query=Herderschule%20Halle%20B%2C%20Kropbacher%20Weg%2045%2C%2035398%20Gie%C3%9Fen" target="_blank" rel="noopener noreferrer">◉ Google Maps ↗</a>
+              <a class="map-link" href="https://www.herderschule-giessen.de/fileadmin/user_upload/swscore_herderschule/images/gebaeude/gebaeudeplan/hsgi_lageplan_uebersicht_stand_24-04-23_v06.pdf" target="_blank" rel="noopener noreferrer">▦ Hallen-Lageplan ↗</a>
+            </div></div>
+            <p class="map-explain">Tipp: Die Halle B ist im offiziellen Lageplan orange markiert. Mit Buslinie 7 bis „Kropbacher Weg“.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="hall-of-fame" class="section archive">
+ <div class="wrap">
+  <div class="section-heading"><div class="eyebrow">03 / Hall of Fame</div><h2>Früher war<br><span>mehr Sprungkraft.</span></h2>
+   <p>Von 2004 bis 2019: Mannschaftsbilder, Turniere, Spielzüge und Frisuren, die unbedingt für die Nachwelt erhalten bleiben mussten. Eine kleine Zeitreise durch unsere Basketballgeschichte.</p>
+   <span class="archive-sub">20 Fotos aus dem Vereinsarchiv · 2004–2019</span>
+  </div>
+  <div class="photo-grid" id="photo-grid" aria-label="Historische GWG-Basketballfotos">
+    <button type="button" class="polaroid photo-card" data-full="assets/fotos/gwg-01-2004.webp" data-caption="2004 · Mannschaftsbild" aria-label="Foto vergrößern: 2004 · Mannschaftsbild">
+  <span class="photo-frame"><img src="assets/fotos/gwg-01-2004-thumb.webp" width="660" height="480" alt="Ein Mannschaftsbild aus dem Jahr 2004" loading="lazy" decoding="async"></span>
+  <span class="photo-label"><span class="photo-year">2004</span> Mannschaftsbild</span>
+</button>
+<button type="button" class="polaroid photo-card" data-full="assets/fotos/gwg-02-2008.webp" data-caption="2008 · Mannschaftsfoto" aria-label="Foto vergrößern: 2008 · Mannschaftsfoto">
+  <span class="photo-frame"><img src="assets/fotos/gwg-02-2008-thumb.webp" width="660" height="480" alt="Mannschaftsfoto aus dem Jahr 2008" loading="lazy" decoding="async"></span>
+  <span class="photo-label"><span class="photo-year">2008</span> Mannschaftsfoto</span>
+</button>
+<button type="button" class="polaroid photo-card" data-full="assets/fotos/gwg-03-2009.webp" data-caption="2009 · Mannschaftsbild" aria-label="Foto vergrößern: 2009 · Mannschaftsbild">
+  <span class="photo-frame"><img src="assets/fotos/gwg-03-2009-thumb.webp" width="660" height="480" alt="Mannschaftsfoto vom September 2009" loading="lazy" decoding="async"></span>
+  <span class="photo-label"><span class="photo-year">2009</span> Mannschaftsbild</span>
+</button>
+<button type="button" class="polaroid photo-card" data-full="assets/fotos/gwg-04-2010.webp" data-caption="2010 · Hassia-Turnier" aria-label="Foto vergrößern: 2010 · Hassia-Turnier">
+  <span class="photo-frame"><img src="assets/fotos/gwg-04-2010-thumb.webp" width="660" height="480" alt="Basketballspieler beim Hassia-Turnier 2010" loading="lazy" decoding="async"></span>
+  <span class="photo-label"><span class="photo-year">2010</span> Hassia-Turnier</span>
+</button>
+<button type="button" class="polaroid photo-card" data-full="assets/fotos/gwg-05-2011.webp" data-caption="2011 · Der Spaß gehört dazu" aria-label="Foto vergrößern: 2011 · Der Spaß gehört dazu">
+  <span class="photo-frame"><img src="assets/fotos/gwg-05-2011-thumb.webp" width="660" height="480" alt="Zwei Basketballspieler lächeln in die Kamera" loading="lazy" decoding="async"></span>
+  <span class="photo-label"><span class="photo-year">2011</span> Der Spaß gehört dazu</span>
+</button>
+<button type="button" class="polaroid photo-card" data-full="assets/fotos/gwg-06-2012.webp" data-caption="2012 · Die zweite Mannschaft" aria-label="Foto vergrößern: 2012 · Die zweite Mannschaft">
+  <span class="photo-frame"><img src="assets/fotos/gwg-06-2012-thumb.webp" width="660" height="480" alt="Mannschaftsfoto in grünen Trikots 2012" loading="lazy" decoding="async"></span>
+  <span class="photo-label"><span class="photo-year">2012</span> Die zweite Mannschaft</span>
+</button>
+<button type="button" class="polaroid photo-card" data-full="assets/fotos/gwg-07-2016.webp" data-caption="2016 · Januar 2016" aria-label="Foto vergrößern: 2016 · Januar 2016">
+  <span class="photo-frame"><img src="assets/fotos/gwg-07-2016-thumb.webp" width="660" height="480" alt="Mannschaftsbild aus dem Januar 2016" loading="lazy" decoding="async"></span>
+  <span class="photo-label"><span class="photo-year">2016</span> Januar 2016</span>
+</button>
+<button type="button" class="polaroid photo-card" data-full="assets/fotos/gwg-08-2017.webp" data-caption="2017 · Mannschaftsbild" aria-label="Foto vergrößern: 2017 · Mannschaftsbild">
+  <span class="photo-frame"><img src="assets/fotos/gwg-08-2017-thumb.webp" width="660" height="480" alt="GWG-Spieler in grünen Trikots im Jahr 2017" loading="lazy" decoding="async"></span>
+  <span class="photo-label"><span class="photo-year">2017</span> Mannschaftsbild</span>
+</button>
+<button type="button" class="polaroid photo-card" data-full="assets/fotos/gwg-09-2019.webp" data-caption="2019 · Februar 2019" aria-label="Foto vergrößern: 2019 · Februar 2019">
+  <span class="photo-frame"><img src="assets/fotos/gwg-09-2019-thumb.webp" width="660" height="480" alt="Mannschaftsfoto vom Februar 2019" loading="lazy" decoding="async"></span>
+  <span class="photo-label"><span class="photo-year">2019</span> Februar 2019</span>
+</button>
+<button type="button" class="polaroid photo-card" data-full="assets/fotos/gwg-10-2008.webp" data-caption="2008 · An der Seitenlinie" aria-label="Foto vergrößern: 2008 · An der Seitenlinie" hidden data-extra="true">
+  <span class="photo-frame"><img src="assets/fotos/gwg-10-2008-thumb.webp" width="660" height="480" alt="Spieler in grünen Trikots während einer Unterbrechung" loading="lazy" decoding="async"></span>
+  <span class="photo-label"><span class="photo-year">2008</span> An der Seitenlinie</span>
+</button>
+<button type="button" class="polaroid photo-card" data-full="assets/fotos/gwg-11-2008.webp" data-caption="2008 · Teamgespräch" aria-label="Foto vergrößern: 2008 · Teamgespräch" hidden data-extra="true">
+  <span class="photo-frame"><img src="assets/fotos/gwg-11-2008-thumb.webp" width="660" height="480" alt="Spieler bei einem Teamgespräch in der Halle" loading="lazy" decoding="async"></span>
+  <span class="photo-label"><span class="photo-year">2008</span> Teamgespräch</span>
+</button>
+<button type="button" class="polaroid photo-card" data-full="assets/fotos/gwg-12-2009.webp" data-caption="2009 · Dezember 2009" aria-label="Foto vergrößern: 2009 · Dezember 2009" hidden data-extra="true">
+  <span class="photo-frame"><img src="assets/fotos/gwg-12-2009-thumb.webp" width="660" height="480" alt="Mannschaftsfoto in einer Sporthalle im Dezember 2009" loading="lazy" decoding="async"></span>
+  <span class="photo-label"><span class="photo-year">2009</span> Dezember 2009</span>
+</button>
+<button type="button" class="polaroid photo-card" data-full="assets/fotos/gwg-13-2009.webp" data-caption="2009 · An der Bank" aria-label="Foto vergrößern: 2009 · An der Bank" hidden data-extra="true">
+  <span class="photo-frame"><img src="assets/fotos/gwg-13-2009-thumb.webp" width="660" height="480" alt="Spieler in grünen Trikots sitzen an der Seitenlinie" loading="lazy" decoding="async"></span>
+  <span class="photo-label"><span class="photo-year">2009</span> An der Bank</span>
+</button>
+<button type="button" class="polaroid photo-card" data-full="assets/fotos/gwg-14-2010.webp" data-caption="2010 · Turniermomente" aria-label="Foto vergrößern: 2010 · Turniermomente" hidden data-extra="true">
+  <span class="photo-frame"><img src="assets/fotos/gwg-14-2010-thumb.webp" width="660" height="480" alt="Spieler in der Sporthalle beim Hassia-Turnier 2010" loading="lazy" decoding="async"></span>
+  <span class="photo-label"><span class="photo-year">2010</span> Turniermomente</span>
+</button>
+<button type="button" class="polaroid photo-card" data-full="assets/fotos/gwg-15-2010.webp" data-caption="2010 · Butzbach – Spielszene" aria-label="Foto vergrößern: 2010 · Butzbach – Spielszene" hidden data-extra="true">
+  <span class="photo-frame"><img src="assets/fotos/gwg-15-2010-thumb.webp" width="660" height="480" alt="Spielszene bei einem Basketballspiel in Butzbach 2010" loading="lazy" decoding="async"></span>
+  <span class="photo-label"><span class="photo-year">2010</span> Butzbach – Spielszene</span>
+</button>
+<button type="button" class="polaroid photo-card" data-full="assets/fotos/gwg-16-2010.webp" data-caption="2010 · Butzbach – Korbaktion" aria-label="Foto vergrößern: 2010 · Butzbach – Korbaktion" hidden data-extra="true">
+  <span class="photo-frame"><img src="assets/fotos/gwg-16-2010-thumb.webp" width="660" height="480" alt="Zwei Spieler bei einer Aktion unter dem Korb in Butzbach" loading="lazy" decoding="async"></span>
+  <span class="photo-label"><span class="photo-year">2010</span> Butzbach – Korbaktion</span>
+</button>
+<button type="button" class="polaroid photo-card" data-full="assets/fotos/gwg-17-2010.webp" data-caption="2010 · Zweite Mannschaft" aria-label="Foto vergrößern: 2010 · Zweite Mannschaft" hidden data-extra="true">
+  <span class="photo-frame"><img src="assets/fotos/gwg-17-2010-thumb.webp" width="660" height="480" alt="Mannschaftsfoto der zweiten Mannschaft 2010" loading="lazy" decoding="async"></span>
+  <span class="photo-label"><span class="photo-year">2010</span> Zweite Mannschaft</span>
+</button>
+<button type="button" class="polaroid photo-card" data-full="assets/fotos/gwg-18-2011.webp" data-caption="2011 · Am Spielfeldrand" aria-label="Foto vergrößern: 2011 · Am Spielfeldrand" hidden data-extra="true">
+  <span class="photo-frame"><img src="assets/fotos/gwg-18-2011-thumb.webp" width="660" height="480" alt="Spieler in weißen Trikots am Spielfeldrand" loading="lazy" decoding="async"></span>
+  <span class="photo-label"><span class="photo-year">2011</span> Am Spielfeldrand</span>
+</button>
+<button type="button" class="polaroid photo-card" data-full="assets/fotos/gwg-19-2011.webp" data-caption="2011 · Vor dem nächsten Angriff" aria-label="Foto vergrößern: 2011 · Vor dem nächsten Angriff" hidden data-extra="true">
+  <span class="photo-frame"><img src="assets/fotos/gwg-19-2011-thumb.webp" width="660" height="480" alt="Spieler in weißen Trikots in der Sporthalle" loading="lazy" decoding="async"></span>
+  <span class="photo-label"><span class="photo-year">2011</span> Vor dem nächsten Angriff</span>
+</button>
+<button type="button" class="polaroid photo-card" data-full="assets/fotos/gwg-20-2011.webp" data-caption="2011 · September 2011" aria-label="Foto vergrößern: 2011 · September 2011" hidden data-extra="true">
+  <span class="photo-frame"><img src="assets/fotos/gwg-20-2011-thumb.webp" width="660" height="480" alt="Mannschaftsfoto in der Halle 2011" loading="lazy" decoding="async"></span>
+  <span class="photo-label"><span class="photo-year">2011</span> September 2011</span>
+</button>
+  </div>
+  <div class="gallery-more-wrap"><button type="button" class="gallery-more" id="gallery-more" aria-expanded="false" aria-controls="photo-grid">Alle 20 Fotos ansehen <span aria-hidden="true">↓</span></button></div>
+  <p class="archive-note">Die Jahresangaben stammen aus unserem Fotoarchiv. Zum Vergrößern einfach auf ein Bild tippen.</p>
+ </div>
+</section>
+
+    <section class="lastcall" aria-labelledby="call-title"><div class="wrap lastcall-inner"><div><h2 id="call-title">Noch Lust<br>auf ein Spiel?</h2><p>Dann sei montags dabei! Schreib Jan eine Mail oder schau beim Training in Halle B vorbei. Wir freuen uns über neue Mitspielerinnen und Mitspieler.</p></div><a class="btn" href="mailto:j.koelb@gmx.de?subject=Probetraining%20bei%20GWG%20Basketball&amp;body=Hallo%20Jan%2C%0A%0Aich%20w%C3%BCrde%20gerne%20mal%20beim%20Basketballtraining%20vorbeischauen.%0A%0AViele%20Gr%C3%BC%C3%9Fe">Kontakt: j.koelb@gmx.de <span aria-hidden="true">↗</span></a></div></section>
+  </main>
+
+  <footer class="footer"><div class="wrap footer-inner"><div class="footer-name">GWG Basketball <small>Grün-Weiß Gießen · Montags 20:00–22:00 Uhr</small></div><nav class="footer-links" aria-label="Rechtliche Informationen"><a href="mailto:j.koelb@gmx.de">Kontakt</a><a href="impressum.html">Impressum</a><a href="datenschutz.html">Datenschutz</a><a href="#start">Nach oben ↑</a></nav></div></footer>
+
+
+  <dialog id="photo-dialog" class="photo-dialog" aria-label="Historisches Basketballfoto">
+    <div class="dialog-inner">
+      <button class="dialog-button dialog-close" type="button" id="dialog-close" aria-label="Fotoansicht schließen">✕</button>
+      <img class="dialog-photo" id="dialog-image" alt="" width="1200" height="900">
+      <div class="dialog-bar">
+        <div><strong id="dialog-caption"></strong><br><span class="dialog-count" id="dialog-count"></span></div>
+        <div class="dialog-tools"><button class="dialog-button" id="dialog-prev" type="button" aria-label="Vorheriges Foto">←</button><button class="dialog-button" id="dialog-next" type="button" aria-label="Nächstes Foto">→</button></div>
+      </div>
+    </div>
+  </dialog>
+
+  <script>
+    // OpenStreetMap wird erst durch die aktive Einwilligung geladen.
+    // Eine Entscheidung wird weder in Cookies noch in localStorage gespeichert.
+    (function () {
+      'use strict';
+      const container = document.getElementById('osm-map');
+      const initialMarkup = container ? container.innerHTML : '';
+      if (!container) return;
+      container.addEventListener('click', function (event) {
+        const action = event.target.closest('#osm-load, #osm-close');
+        if (!action) return;
+        if (action.id === 'osm-close') {
+          container.innerHTML = initialMarkup;
+          return;
+        }
+        const iframe = document.createElement('iframe');
+        iframe.title = 'OpenStreetMap: Sporthalle B der Herderschule in Gießen';
+        iframe.src = 'https://www.openstreetmap.org/export/embed.html?bbox=8.6551%2C50.5894%2C8.6623%2C50.5932&layer=mapnik&marker=50.59131%2C8.65874';
+        iframe.referrerPolicy = 'no-referrer';
+        iframe.setAttribute('allowfullscreen', '');
+        const close = document.createElement('button');
+        close.type = 'button';
+        close.id = 'osm-close';
+        close.className = 'osm-close';
+        close.textContent = '✕ Karte schließen';
+        close.setAttribute('aria-label', 'OpenStreetMap-Karte schließen');
+        container.replaceChildren(iframe, close);
+        close.focus();
+      });
+    }());
+
+    // Lightbox for the entire local photo archive. Supports swipe, keyboard and close on backdrop.
+    (function(){
+      'use strict';
+      const list = Array.from(document.querySelectorAll('.photo-card'));
+      const dlg = document.getElementById('photo-dialog');
+      const photo = document.getElementById('dialog-image');
+      const caption = document.getElementById('dialog-caption');
+      const counter = document.getElementById('dialog-count');
+      const more = document.getElementById('gallery-more');
+      let current=0, origin=null, xStart=null;
+      function show(i){
+        current=(i+list.length)%list.length;
+        const item=list[current];
+        photo.src=item.dataset.full;
+        photo.alt=item.querySelector('img').alt;
+        caption.textContent=item.dataset.caption;
+        counter.textContent=(current+1)+' / '+list.length;
+      }
+      list.forEach((item,i)=>item.addEventListener('click',()=>{
+        origin=item; show(i); dlg.showModal();
+      }));
+      document.getElementById('dialog-close').addEventListener('click',()=>dlg.close());
+      document.getElementById('dialog-prev').addEventListener('click',()=>show(current-1));
+      document.getElementById('dialog-next').addEventListener('click',()=>show(current+1));
+      dlg.addEventListener('click',e=>{if(e.target===dlg)dlg.close()});
+      dlg.addEventListener('close',()=>{photo.removeAttribute('src');if(origin)origin.focus()});
+      dlg.addEventListener('keydown',e=>{
+        if(e.key==='ArrowRight'){e.preventDefault();show(current+1)}
+        if(e.key==='ArrowLeft'){e.preventDefault();show(current-1)}
+      });
+      photo.addEventListener('touchstart',e=>{xStart=e.changedTouches[0].screenX},{passive:true});
+      photo.addEventListener('touchend',e=>{
+        if(xStart===null)return;
+        const delta=e.changedTouches[0].screenX-xStart;
+        if(Math.abs(delta)>55)show(current+(delta<0?1:-1));
+        xStart=null;
+      },{passive:true});
+      more.addEventListener('click',()=>{
+        const expanded=more.getAttribute('aria-expanded')==='true';
+        list.filter(n=>n.hasAttribute('data-extra')).forEach(n=>n.hidden=expanded);
+        more.setAttribute('aria-expanded',String(!expanded));
+        more.innerHTML=expanded?'Alle 20 Fotos ansehen <span aria-hidden="true">↓</span>':'Weniger Fotos anzeigen <span aria-hidden="true">↑</span>';
+      });
+    }());
+  </script>
+</body>
+</html>
